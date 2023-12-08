@@ -45,7 +45,7 @@ function HomePage() {
     <>
       <Header />
       {/* <div></div> */}
-      <div className="min-w-screen min-h-screen w-full h-full flex items-center">
+      <div className="min-w-screen justify-center p-[2rem] min-h-screen w-full max-w-[1280px] h-full flex items-center">
         <img
           src="https://wallpaperaccess.com/full/1155017.jpg"
           className="absolute top-0 right-0 left-0 bottom-0 blur-[300px]"
