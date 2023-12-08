@@ -1,4 +1,4 @@
-import { Wallet } from "lucide-react";
+import { Github, Wallet } from "lucide-react";
 import "./App.css";
 import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";
@@ -25,8 +25,15 @@ function App() {
         <span className="opacity-80">
           Seamlessly Verify Documents Without Compromising Your Confidentiality
         </span>
-        <div>
-          <Button></Button>
+        <div className="mt-[2rem] flex gap-4">
+          <Button className="flex gap-2">
+            <Wallet />
+            Connect Wallet
+          </Button>
+          <Button className="flex gap-2" variant="outline">
+            <Github />
+            View on Github
+          </Button>
         </div>
       </div>
       <div className="min-w-screen min-h-screen w-full h-full flex items-center"></div>
