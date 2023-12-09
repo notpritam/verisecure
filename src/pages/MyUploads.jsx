@@ -26,7 +26,7 @@ import {
 import { useVariable } from "@/lib/storage";
 import lighthouse from "@lighthouse-web3/sdk";
 
-function Profile() {
+function MyUploads() {
   const [selectedFile, setSelectedFile] = useState(null);
   const signer = useVariable((state) => state.signer);
   const apiKey = useVariable((state) => state.apiKey);
@@ -53,12 +53,7 @@ function Profile() {
     console.log("tr signer", signer, signerAddress);
     const signedMessage = await signAuthMessage();
     let file = event.target.files;
-    console.log(
-      file,
-      apiKey,
-      signerAddress,
-      signedMessage.signedMessage
-    )
+    console.log(file, apiKey, signerAddress, signedMessage.signedMessage);
     // Upload file with encryption
     const output = await lighthouse.uploadEncrypted(
       file,
@@ -135,7 +130,7 @@ function Profile() {
         (file) => file !== null
       );
 
-      console.log("shared", sharedFiles)
+      console.log("shared", sharedFiles);
       setOtherUserFiles(sharedFiles);
     } catch (error) {
       console.error("Error fetching uploads:", error);
@@ -223,20 +218,6 @@ function Profile() {
               </Button>
             </Link>
           </div>
-          <div className="flex gap-4">
-            <Link to={"/profile?action=upload"}>
-              {/* <Button className="flex gap-2">
-                <Upload />
-                Upload Files
-              </Button> */}
-            </Link>
-            <Link to="/myfiles">
-              <Button variant="outline" className="flex gap-2">
-                <UserRoundCog />
-                My Files
-              </Button>
-            </Link>
-          </div>
         </div>
       </header>
 
@@ -260,91 +241,43 @@ function Profile() {
             )}
           </Card>
         </div>
-        <div className="flex w-full max-w-[1280px] gap-4">
-          <div className="w-full flex flex-col gap-4 max-w-[1280px]">
-            <span className="text-[2rem] font-bold">Your Files</span>
-            {userFiles.length > 0 ? (
-              userFiles.map((file, index) => (
-                <Card
-                  key={index}
-                  className="flex flex-col gap-2 p-4 w-full max-w-[600px]"
-                >
-                  {Object.entries(file).map(([key, value], propIndex) => {
-                    let displayValue;
+        <div className="w-full flex flex-col gap-4 max-w-[1280px]">
+          <span className="text-[2rem] font-bold">Your Files</span>
+          {userFiles.length > 0 ? (
+            userFiles.map((file, index) => (
+              <Card
+                key={index}
+                className="flex flex-col gap-1 p-4 w-full max-w-[600px]"
+              >
+                {Object.entries(file).map(([key, value], propIndex) => {
+                  let displayValue;
 
-                    if (typeof value === "boolean") {
-                      displayValue = value ? "Yes" : "No";
-                    } else if (key === "createdAt") {
-                      displayValue = new Date(value).toLocaleString(); // Format date
-                    } else {
-                      displayValue = value;
-                    }
+                  if (typeof value === "boolean") {
+                    displayValue = value ? "Yes" : "No";
+                  } else if (key === "createdAt") {
+                    displayValue = new Date(value).toLocaleString(); // Format date
+                  } else {
+                    displayValue = value;
+                  }
 
-                    return (
-                      <div key={propIndex} className="flex justify-between">
-                        <strong>{key}:</strong>
-                        <span>{displayValue}</span>
-                      </div>
-                    );
-                  })}
-                  <button
-                    onClick={() => handleViewFile(file.cid, file.mimeType)}
-                    className="view-button"
-                  >
-                    View
-                  </button>
-                </Card>
-              ))
-            ) : (
-              <p>No files uploaded yet.</p>
-            )}
-          </div>
-          <div className="w-full flex flex-col gap-4 max-w-[1280px]">
-            <span className="text-[2rem] font-bold">Others Files</span>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <>
-                <Card
-                  key={i}
-                  className={cn(
-                    "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
-                  )}
-                >
-                  <div className="flex gap-4 items-center">
-                    <img
-                      className={cn("h-10 w-10 rounded-full")}
-                      src="https://i.pravatar.cc/300"
-                    ></img>
-                    <div className="flex flex-col">
-                      <span className={cn("text-[1.5rem] font-bold")}>
-                        John Doe {i}
-                      </span>
-                      <div className="flex gap-8">
-                        <span className="text-[0.8rem] opacity-80">
-                          0x1234567890
-                        </span>
-                        <span className="text-[0.8rem] opacity-80">
-                          Size :- 123Kb
-                        </span>
-                      </div>
+                  return (
+                    <div key={propIndex} className="flex justify-between">
+                      <strong>{key}:</strong>
+                      <span>{displayValue}</span>
                     </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <Popover>
-                      <PopoverTrigger>
-                        <MoreVertical />
-                      </PopoverTrigger>
-                      <PopoverContent className="flex gap-2 flex-col">
-                        {/* <Button>Delete</Button> */}
-                        <Button>View</Button>
-                        {/* <Button>Share</Button> */}
-                      </PopoverContent>
-                    </Popover>
-                    {/* <Button variant="outline">Verify</Button> */}
-                  </div>
-                </Card>
-              </>
-            ))}
-          </div>
+                  );
+                })}
+                <button
+                  onClick={() => handleViewFile(file.cid, file.mimeType)}
+                  className="view-button"
+                >
+                  View
+                </button>
+              </Card>
+            ))
+          ) : (
+            <p>No files uploaded yet.</p>
+          )}
         </div>
       </div>
       <FileModal />
@@ -352,4 +285,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default MyUploads;

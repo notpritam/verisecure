@@ -1,18 +1,17 @@
-import Header from '@/components/header';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Github, Wallet } from 'lucide-react';
-import React, { useState } from 'react';
-import ethLogo from '../assets/ethIndia.svg';
-import { Link } from 'react-router-dom';
-import Web3 from 'web3';
-import { useWallet } from '../pages/WalletAddressContext';
-import { ethers } from 'ethers';
-import { useNavigate } from 'react-router-dom';
-import { create } from 'zustand'
+import Header from "@/components/header";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Github, Wallet } from "lucide-react";
+import React, { useState } from "react";
+import ethLogo from "../assets/ethIndia.svg";
+import { Link } from "react-router-dom";
+import Web3 from "web3";
+import { useWallet } from "../pages/WalletAddressContext";
+import { ethers } from "ethers";
+import { useNavigate } from "react-router-dom";
+import { create } from "zustand";
 
 function HomePage({ web3Handler, walletAddress, provider, contract }) {
-    
   // const { walletAddress, setWalletAddress } = useWallet();
   console.log(walletAddress);
   // const navigate=useNavigate();
@@ -22,7 +21,7 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
 
   return (
     <>
-      {/* <Header web3Handler={web3Handler} walletAddress={walletAddress}/> */}
+      <Header web3Handler={web3Handler} walletAddress={walletAddress} />
       {/* <div></div> */}
       <div className="min-w-screen justify-center p-[2rem] min-h-screen w-full max-w-[1280px] h-full flex items-center">
         <img
@@ -64,10 +63,21 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
               View on Github
             </Button>
           </div>
-          <Link to={{
-              pathname: '/dashboard'
-             
-            }}>Dashboard</Link>
+          <Link
+            to={{
+              pathname: "/dashboard",
+            }}
+          >
+            Dashboard
+          </Link>
+
+          <Link
+            to={{
+              pathname: "/profile",
+            }}
+          >
+            Profile
+          </Link>
           {/* <button
             onClick={navigate('/dashboard', {
               state: {
