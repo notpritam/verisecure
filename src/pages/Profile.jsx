@@ -1,8 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
-import ethLogo from "../assets/ethIndia.svg";
-import Header from "@/components/header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from 'react-router-dom';
+import ethLogo from '../assets/ethIndia.svg';
+import Header from '@/components/header';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Github,
   Lock,
@@ -12,21 +12,21 @@ import {
   UserRoundCog,
   View,
   Wallet,
-} from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import React, { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
-import { ethers } from "ethers";
+} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import React, { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { ethers } from 'ethers';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useVariable } from "@/lib/storage";
-import lighthouse, { shareFile } from "@lighthouse-web3/sdk";
-import sendNotification from "@/utils/sendPushWeb3Notificatiobs";
+} from '@/components/ui/popover';
+import { useVariable } from '@/lib/storage';
+import lighthouse, { shareFile } from '@lighthouse-web3/sdk';
+import sendNotification from '@/utils/sendPushWeb3Notificatiobs';
 
 function Profile() {
   const [pastRequests, setPastRequests] = useState([]);
@@ -56,7 +56,7 @@ function Profile() {
   const handleFileChange = async (event) => {
     setSelectedFile(URL.createObjectURL(event.target.files[0]));
     const signerAddress = await signer.getAddress();
-    console.log("tr signer", signer, signerAddress);
+    console.log('tr signer', signer, signerAddress);
     const signedMessage = await signAuthMessage();
     let file = event.target.files;
     console.log(file, apiKey, signerAddress, signedMessage.signedMessage);
@@ -67,7 +67,7 @@ function Profile() {
       signerAddress,
       signedMessage.signedMessage
     );
-    console.log("Encrypted File Status:", output);
+    console.log('Encrypted File Status:', output);
     getUploads();
   };
   const navigate = useNavigate();
@@ -77,7 +77,25 @@ function Profile() {
   const fetchUserFiles = async (userAddress, cid) => {
     try {
       // Wait for all promises to resolve
-      const docs = await contract.getSentRequests();
+      const records = await contract.getSentRequests();
+
+      const docsPromises = records.map(async (event) => {
+        let { cid, docName, fileSize, docOwner } = event;
+        // if (!requestSent || acknowledgment) return;
+        // let fileSize;
+        const request = await contract.requestAccess(walletAddress, cid);
+        let { requestSender, _, requestSent, acknowledgment } = request;
+        console.log(request, docName, fileSize);
+        // fileSize = parseInt(fileSize._hex.toString());
+        console.log(cid,acknowledgment,docName)
+        return { cid, docName, docOwner, fileSize, acknowledgment };
+      });
+
+      // Wait for all promises to resolve
+      const docs = await Promise.all(docsPromises);
+
+      // Wait for all promises to resolve
+      // const docs = pendingRequests();
       console.log(docs);
       setPastRequests(docs);
       console.log(docs);
@@ -119,7 +137,7 @@ function Profile() {
   async function handleApprove(cid, requestSender) {
     try {
       setIsAccepting(true);
-      console.log(cid,requestSender)
+      console.log(cid, requestSender);
       await (await contract.approveRequest(cid, requestSender)).wait();
       setIsAccepting(false);
     } catch (error) {
@@ -129,19 +147,18 @@ function Profile() {
   async function handleReject(cid, requestSender) {
     try {
       setIsRejecting(true);
-      console.log(cid,requestSender);
+      console.log(cid, requestSender);
       await (await contract.rejectRequest(cid, requestSender)).wait();
       await fetchPendingRequests();
       setIsRejecting(false);
-
     } catch (error) {
       console.log("Can't accept currently");
     }
   }
   useEffect(() => {
     if (!walletAddress || !contract) {
-      alert("connect wallet");
-      navigate("/");
+      alert('connect wallet');
+      navigate('/');
     }
     fetchUserFiles();
     fetchPendingRequests();
@@ -158,7 +175,7 @@ function Profile() {
         signedMessage
       );
 
-      console.log("0", fileCid, fileType);
+      console.log('0', fileCid, fileType);
       const decrypted = await lighthouse.decryptFile(
         fileCid,
         keyObject.data.key,
@@ -168,7 +185,7 @@ function Profile() {
       const url = URL.createObjectURL(decrypted);
       return url;
     } catch (error) {
-      console.error("Error decrypting file:", error);
+      console.error('Error decrypting file:', error);
       return null;
     }
   };
@@ -180,14 +197,14 @@ function Profile() {
       setMimeType(mimeType);
       setIsModalOpen(true);
     } catch (error) {
-      console.error("Error decrypting file:", error);
+      console.error('Error decrypting file:', error);
     }
   };
 
   const getUploads = async () => {
     try {
       const response = await lighthouse.getUploads(apiKey);
-      console.log("response", response);
+      console.log('response', response);
       const publicKey = await signer.getAddress();
 
       // Filter the files uploaded by the current user
@@ -195,7 +212,7 @@ function Profile() {
         (file) => file.publicKey.toLowerCase() === publicKey.toLowerCase()
       );
 
-      console.log("userUploadedFiles", userUploadedFiles);
+      console.log('userUploadedFiles', userUploadedFiles);
       setUserFiles(userUploadedFiles);
 
       // Check for files shared with the current user
@@ -211,10 +228,10 @@ function Profile() {
         (file) => file !== null
       );
 
-      console.log("shared", sharedFiles);
+      console.log('shared', sharedFiles);
       setOtherUserFiles(sharedFiles);
     } catch (error) {
-      console.error("Error fetching uploads:", error);
+      console.error('Error fetching uploads:', error);
     }
   };
 
@@ -240,21 +257,21 @@ function Profile() {
 
     let content;
     const fileType = mimeType; //getMimeType(selectedFileUrl);
-    console.log("fileType", fileType);
-    if (fileType.startsWith("image/")) {
+    console.log('fileType', fileType);
+    if (fileType.startsWith('image/')) {
       content = <img src={selectedFileUrl} alt="File Content" />;
-    } else if (fileType === "application/pdf") {
+    } else if (fileType === 'application/pdf') {
       content = (
         <iframe
           src={selectedFileUrl}
-          style={{ width: "100%", height: "300px" }}
+          style={{ width: '100%', height: '300px' }}
         ></iframe>
       );
-    } else if (fileType.startsWith("text/")) {
+    } else if (fileType.startsWith('text/')) {
       content = (
         <iframe
           src={selectedFileUrl}
-          style={{ width: "100%", height: "200px" }}
+          style={{ width: '100%', height: '200px' }}
         ></iframe>
       );
     } else {
@@ -266,7 +283,7 @@ function Profile() {
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setIsModalOpen(false)}
-            style={{ color: "black" }}
+            style={{ color: 'black' }}
           >
             Close
           </button>
@@ -277,13 +294,13 @@ function Profile() {
   };
 
   const AcceptRequest = async (doc) => {
-    console.log("doc", doc);
+    console.log('doc', doc);
     const accessResponse = await lighthouse.getAccessConditions(doc.cid);
-    console.log("accessResponse", accessResponse);
+    console.log('accessResponse', accessResponse);
     let userAddressArray = accessResponse.data.sharedTo;
     userAddressArray.push(doc.requestSender);
     let shareFileForReq = await shareFile(doc?.cid, userAddressArray);
-    console.log("shareFileForReq", shareFileForReq);
+    console.log('shareFileForReq', shareFileForReq);
   };
 
   // const testSendNotification = async (receiverPublicKeys) => {
@@ -302,13 +319,13 @@ function Profile() {
       const cid = fileCid;
       // CID: Unique identifier for content on IPFS.
       const getFileInfo = await lighthouse.getFileInfo(cid);
-      console.log("getFileInfo", getFileInfo);
+      console.log('getFileInfo', getFileInfo);
 
       const receiverPublicKey = userAddressArray;
 
       const signedMessage = await signAuthMessage();
 
-      console.log("signedMessage", signedMessage);
+      console.log('signedMessage', signedMessage);
 
       const shareResponse = await lighthouse.shareFile(
         signedMessage.publicKey,
@@ -330,13 +347,13 @@ function Profile() {
     <>
       <header className="flex z-[999] items-center border-b-2 pb-4 backdrop-blur-xl fixed top-0 left-0 right-0 pl-[4rem] pr-[4rem] p-4 dark justify-between">
         <div className="flex items-center justify-between w-full">
-          <Link to={"/"}>
+          <Link to={'/'}>
             <span className="text-[1.5rem] tracking-wide font-bold">
               AnonVerify
             </span>
           </Link>
           <div className="flex gap-4">
-            <Link to={"/profile?action=upload"}>
+            <Link to={'/profile?action=upload'}>
               {/* <Button className="flex gap-2">
                 <Upload />
                 Upload Files
@@ -350,7 +367,7 @@ function Profile() {
             </Link>
           </div>
           <div className="flex gap-4">
-            <Link to={"/profile?action=upload"}>
+            <Link to={'/profile?action=upload'}>
               {/* <Button className="flex gap-2">
                 <Upload />
                 Upload Files
@@ -395,12 +412,12 @@ function Profile() {
                 <Card
                   key={i}
                   className={cn(
-                    "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
+                    'flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center'
                   )}
                 >
                   <div className="flex gap-4 items-center">
                     <img
-                      className={cn("h-10 w-10 rounded-full")}
+                      className={cn('h-10 w-10 rounded-full')}
                       src="https://i.pravatar.cc/300"
                     ></img>
                     <div className="flex flex-col">
@@ -409,19 +426,23 @@ function Profile() {
                       </span>
                       <div className="flex gap-8">
                         <span className="text-[0.8rem] opacity-80">
-                          {doc.requestSender}
+                          {doc.docOwner}
                         </span>
                         <span className="text-[0.8rem] opacity-80">
                           Size :- {parseInt(doc?.fileSize._hex.toString())}KB
                         </span>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleViewFile(file.cid, file.mimeType)}
-                      className="view-button"
-                    >
-                      View
-                    </button>
+                    {doc.acknowledgment ? (
+                      <button
+                        onClick={() => handleViewFile(file.cid, file.mimeType)}
+                        className="view-button"
+                      >
+                        View
+                      </button>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </Card>
               </>
@@ -436,16 +457,16 @@ function Profile() {
                 <Card
                   key={i}
                   className={cn(
-                    "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
+                    'flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center'
                   )}
                 >
                   <div className="flex gap-4 items-center">
                     <img
-                      className={cn("h-10 w-10 rounded-full")}
+                      className={cn('h-10 w-10 rounded-full')}
                       src="https://i.pravatar.cc/300"
                     ></img>
                     <div className="flex flex-col">
-                      <span className={cn("text-[1.5rem] font-bold")}>
+                      <span className={cn('text-[1.5rem] font-bold')}>
                         {doc?.docName}
                       </span>
                       <div className="flex gap-8">
@@ -466,14 +487,21 @@ function Profile() {
                       <PopoverContent className="flex gap-2 flex-col">
                         {/* <Button>Delete</Button> */}
                         <Button
-                        disabled={isRejecting}
+                          disabled={isRejecting}
                           onClick={() =>
                             handleApprove(doc.cid, doc.requestSender)
                           }
                         >
                           Accept
                         </Button>
-                        <Button disabled={isAccepting} onClick={()=>handleReject(doc.cid,doc.requestSender)}>Reject</Button>
+                        <Button
+                          disabled={isAccepting}
+                          onClick={() =>
+                            handleReject(doc.cid, doc.requestSender)
+                          }
+                        >
+                          Reject
+                        </Button>
                         {/* <Button>Share</Button> */}
                       </PopoverContent>
                     </Popover>
