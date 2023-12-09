@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "./ui/button";
 import { Upload, UserRoundCog, Wallet, Wallet2 } from "lucide-react";
 import { Link, redirect, useLocation } from "react-router-dom";
+import NotificationIcon from "../assets/Push_Bell.png";
 
 function Header({ web3Handler, walletAddress }) {
   const location = useLocation();
@@ -62,6 +63,18 @@ function Header({ web3Handler, walletAddress }) {
               </Button>
             </>
           )}
+        </div>
+        <div>
+          <img
+            className="notification-container"
+            style={{ width: "30px", height: "40px" }}
+            src={NotificationIcon}
+          />
+          <Link
+            to={"/notifications"}
+            style={{ color: "white" }}
+          >
+          </Link>
         </div>
       </div>
     </header>

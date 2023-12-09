@@ -94,3 +94,9 @@
   padding: 2px 6px;
   font-size: 0.8rem;
 }
+
+
+.notification-container {
+  position: relative;
+  display: inline-block; /* this will ensure the container takes the size of its content */
+}
