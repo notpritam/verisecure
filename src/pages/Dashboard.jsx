@@ -35,7 +35,13 @@ function Dashboard() {
   };
   return (
     <Dialog>
-      <div className="min-h-screen  h-screen w-screen overflow-x-hidden flex items-center gap-[4rem]  justify-center min-w-screen">
+      {/* <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-900 z-[0]">
+        <img
+          className="blur-[300px]"
+          src="https://images.pexels.com/photos/6985001/pexels-photo-6985001.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
+        ></img>
+      </div> */}
+      <div className="min-h-screen z-[1] relative h-screen w-screen overflow-x-hidden flex items-center gap-[4rem]  justify-center min-w-screen">
         <div
           className={cn(
             "w-full max-w-[1280px] gap-4 items-center  justify-center flex flex-col p-2 min-h-[600px] mt-[8rem] border",
