@@ -32,6 +32,8 @@ function Profile() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [pastRequests, setPastRequests] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
+  const [isAccepting, setIsAccepting] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
   const handleFileChange = (event) => {
     setSelectedFile(URL.createObjectURL(event.target.files[0]));
   };
@@ -39,7 +41,7 @@ function Profile() {
   const walletAddress = useVariable((state) => state.walletAddress);
   const contract = useVariable((state) => state.contract);
   const handleFileUpload = () => {};
-  const fetchUserFiles  = async (userAddress, cid) => {
+  const fetchUserFiles = async (userAddress, cid) => {
     try {
       // Wait for all promises to resolve
       const docs = await contract.getSentRequests();
@@ -51,21 +53,20 @@ function Profile() {
     }
   };
 
-  const fetchPendingRequests=async()=>{
+  const fetchPendingRequests = async () => {
     try {
       let records = await contract.getPendingRequests();
       // records=[...records];
       console.log(records);
       const docsPromises = records.map(async (event) => {
-        const { requestSender, cid, requestSent,acknowledgment } = event;
-        if(!requestSent || acknowledgment)return;
-        
+        const { requestSender, cid, requestSent, acknowledgment } = event;
+        if (!requestSent || acknowledgment) return;
+
         const fileData = await contract.documents(cid);
-        let {_a,docName,fileSize,_b}=fileData;
-        console.log(fileData,docName,fileSize)
-        fileSize=parseInt(fileSize._hex.toString())
+        let { _a, docName, fileSize, _b } = fileData;
+        console.log(fileData, docName, fileSize);
+        fileSize = parseInt(fileSize._hex.toString());
         console.log(fileSize);
-        
 
         return { cid, docName, requestSender, fileSize };
       });
@@ -80,6 +81,28 @@ function Profile() {
       console.log(docs);
     } catch (error) {
       console.log(error);
+    }
+  };
+  async function handleApprove(cid, requestSender) {
+    try {
+      setIsAccepting(true);
+      console.log(cid,requestSender)
+      await (await contract.approveRequest(cid, requestSender)).wait();
+      setIsAccepting(false);
+    } catch (error) {
+      console.log("Can't accept currently");
+    }
+  }
+  async function handleReject(cid, requestSender) {
+    try {
+      setIsRejecting(true);
+      console.log(cid,requestSender);
+      await (await contract.rejectRequest(cid, requestSender)).wait();
+      await fetchPendingRequests();
+      setIsRejecting(false);
+
+    } catch (error) {
+      console.log("Can't accept currently");
     }
   }
   useEffect(() => {
@@ -114,8 +137,6 @@ function Profile() {
           </Card>
         </div>
         <div className="flex w-full max-w-[1280px] gap-4">
-
-
           <div className="w-full flex flex-col gap-4 max-w-[1280px]">
             <span className="text-[2rem] font-bold">Past requests</span>
             {/* {Array.from({ length: 10 }).map((_, i) => ( */}
@@ -134,7 +155,7 @@ function Profile() {
                     ></img>
                     <div className="flex flex-col">
                       <span className={cn('text-[1.5rem] font-bold')}>
-                       {doc.docName}
+                        {doc.docName}
                       </span>
                       <div className="flex gap-8">
                         <span className="text-[0.8rem] opacity-80">
@@ -164,13 +185,10 @@ function Profile() {
             ))}
           </div>
 
-
-
           <div className="w-full flex flex-col gap-4 max-w-[1280px]">
             <span className="text-[2rem] font-bold">Pending Approvals</span>
             {/* {Array.from({ length: 10 }).map((_, i) => ( */}
             {pendingRequests.map((doc, i) => (
-
               <>
                 <Card
                   key={i}
@@ -192,7 +210,7 @@ function Profile() {
                           {doc.requestSender}
                         </span>
                         <span className="text-[0.8rem] opacity-80">
-                          Size :- 123Kb
+                          Size :- {doc.fileSize}
                         </span>
                       </div>
                     </div>
@@ -204,8 +222,15 @@ function Profile() {
                       </PopoverTrigger>
                       <PopoverContent className="flex gap-2 flex-col">
                         {/* <Button>Delete</Button> */}
-                        <Button>Accept</Button>
-                        <Button>Reject</Button>
+                        <Button
+                        disabled={isRejecting}
+                          onClick={() =>
+                            handleApprove(doc.cid, doc.requestSender)
+                          }
+                        >
+                          Accept
+                        </Button>
+                        <Button disabled={isAccepting} onClick={()=>handleReject(doc.cid,doc.requestSender)}>Reject</Button>
                         {/* <Button>Share</Button> */}
                       </PopoverContent>
                     </Popover>
