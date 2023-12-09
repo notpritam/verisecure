@@ -7,6 +7,8 @@ const variables = (set) => ({
 //   batchNumber: null,
   walletAddress: null,
   contract: null,
+  signer : null,
+  apiKey: null,
 
   updateWalletAddress: (wallet) => {
     set((state) => {
@@ -19,6 +21,20 @@ const variables = (set) => ({
     set((state) => {
       return {
         contract: address,
+      };
+    });
+  },
+  updateSinger: (_signer) => {
+    set((state) => {
+      return {
+        signer: _signer,
+      };
+    });
+  },
+  updateAPIKey: (_apiKey) => {
+    set((state) => {
+      return {
+        apiKey: _apiKey,
       };
     });
   },

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ethLogo from "../assets/ethIndia.svg";
 import Header from "@/components/header";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { ethers } from "ethers";
 import {
   Popover,
   PopoverContent,
@@ -27,11 +26,7 @@ import {
 import { useVariable } from "@/lib/storage";
 import lighthouse from "@lighthouse-web3/sdk";
 
-function Profile() {
-  const [pastRequests, setPastRequests] = useState([]);
-  const [pendingRequests, setPendingRequests] = useState([]);
-  const [isAccepting, setIsAccepting] = useState(false);
-  const [isRejecting, setIsRejecting] = useState(false);
+function MyUploads() {
   const [selectedFile, setSelectedFile] = useState(null);
   const signer = useVariable((state) => state.signer);
   const apiKey = useVariable((state) => state.apiKey);
@@ -40,7 +35,9 @@ function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFileUrl, setSelectedFileUrl] = useState(null);
   const [mimeType, setMimeType] = useState();
-
+  const walletAddress = useVariable((state) => state.walletAddress);
+  const contract = useVariable((state) => state.contract);
+  
   const signAuthMessage = async () => {
     const address = await signer.getAddress();
     const messageRequested = (await lighthouse.getAuthMessage(address)).data
@@ -67,84 +64,25 @@ function Profile() {
       signedMessage.signedMessage
     );
     console.log("Encrypted File Status:", output);
+    let cid;
+    let _docName;
+    let _fileSize;
+    if (output?.data?.fileList) {
+      cid = output.data.fileList[0].cid;
+      _docName = output.data.fileList[0].fileName;
+      _fileSize = Math.round(Number(output.data.fileList[0].fileSizeInBytes) / 1024);
+    } else {
+      cid = output.data[0].Hash;
+      _docName = output.data[0].Name;
+      _fileSize = Math.round(Number(output.data[0].Size) / 1024);
+    }
+    console.log(cid, _docName, _fileSize);
+    await (await contract.addDocument(cid, _docName, _fileSize)).wait();
+    setSelectedFile(null);
+
     getUploads();
   };
-  const navigate = useNavigate();
-  const walletAddress = useVariable((state) => state.walletAddress);
-  const contract = useVariable((state) => state.contract);
   const handleFileUpload = () => {};
-  const fetchUserFiles = async (userAddress, cid) => {
-    try {
-      // Wait for all promises to resolve
-      const docs = await contract.getSentRequests();
-      console.log(docs);
-      setPastRequests(docs);
-      console.log(docs);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchPendingRequests = async () => {
-    try {
-      let records = await contract.getPendingRequests();
-      // records=[...records];
-      console.log(records);
-      const docsPromises = records.map(async (event) => {
-        const { requestSender, cid, requestSent, acknowledgment } = event;
-        if (!requestSent || acknowledgment) return;
-
-        const fileData = await contract.documents(cid);
-        let { _a, docName, fileSize, _b } = fileData;
-        console.log(fileData, docName, fileSize);
-        fileSize = parseInt(fileSize._hex.toString());
-        console.log(fileSize);
-
-        return { cid, docName, requestSender, fileSize };
-      });
-
-      // Wait for all promises to resolve
-      const docs = await Promise.all(docsPromises);
-
-      // Wait for all promises to resolve
-      // const docs = pendingRequests();
-      console.log(docs);
-      setPendingRequests(docs);
-      console.log(docs);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  async function handleApprove(cid, requestSender) {
-    try {
-      setIsAccepting(true);
-      console.log(cid,requestSender)
-      await (await contract.approveRequest(cid, requestSender)).wait();
-      setIsAccepting(false);
-    } catch (error) {
-      console.log("Can't accept currently");
-    }
-  }
-  async function handleReject(cid, requestSender) {
-    try {
-      setIsRejecting(true);
-      console.log(cid,requestSender);
-      await (await contract.rejectRequest(cid, requestSender)).wait();
-      await fetchPendingRequests();
-      setIsRejecting(false);
-
-    } catch (error) {
-      console.log("Can't accept currently");
-    }
-  }
-  useEffect(() => {
-    if (!walletAddress || !contract) {
-      alert("connect wallet");
-      navigate("/");
-    }
-    fetchUserFiles();
-    fetchPendingRequests();
-  }, []);
 
   const decryptFile = async (fileCid) => {
     try {
@@ -298,20 +236,6 @@ function Profile() {
               </Button>
             </Link>
           </div>
-          <div className="flex gap-4">
-            <Link to={"/profile?action=upload"}>
-              {/* <Button className="flex gap-2">
-                <Upload />
-                Upload Files
-              </Button> */}
-            </Link>
-            <Link to="/myfiles">
-              <Button variant="outline" className="flex gap-2">
-                <UserRoundCog />
-                My Files
-              </Button>
-            </Link>
-          </div>
         </div>
       </header>
 
@@ -335,104 +259,43 @@ function Profile() {
             )}
           </Card>
         </div>
-        <div className="flex w-full max-w-[1280px] gap-4">
-          <div className="w-full flex flex-col gap-4 max-w-[1280px]">
-            <span className="text-[2rem] font-bold">Past requests</span>
-            {/* {Array.from({ length: 10 }).map((_, i) => ( */}
-            {pastRequests.map((doc, i) => (
-              <>
-                <Card
-                  key={i}
-                  className={cn(
-                    "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
-                  )}
-                >
-                  <div className="flex gap-4 items-center">
-                    <img
-                      className={cn("h-10 w-10 rounded-full")}
-                      src="https://i.pravatar.cc/300"
-                    ></img>
-                    <div className="flex flex-col">
-                      <span className={cn('text-[1.5rem] font-bold')}>
-                        {doc.docName}
-                      </span>
-                      <div className="flex gap-8">
-                        <span className="text-[0.8rem] opacity-80">
-                          {doc.requestSender}
-                        </span>
-                        <span className="text-[0.8rem] opacity-80">
-                          Size :- {parseInt(doc?.fileSize._hex.toString())}kb
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleViewFile(file.cid, file.mimeType)}
-                      className="view-button"
-                    >
-                      View
-                    </button>
-                  </div>
-                </Card>
-              </>
-            ))}
-            : (<p>No files uploaded yet.</p>)
-          </div>
+        <div className="w-full flex flex-col gap-4 max-w-[1280px]">
+          <span className="text-[2rem] font-bold">Your Files</span>
+          {userFiles.length > 0 ? (
+            userFiles.map((file, index) => (
+              <Card
+                key={index}
+                className="flex flex-col gap-1 p-4 w-full max-w-[600px]"
+              >
+                {Object.entries(file).map(([key, value], propIndex) => {
+                  let displayValue;
 
-          <div className="w-full flex flex-col gap-4 max-w-[1280px]">
-            <span className="text-[2rem] font-bold">Pending Approvals</span>
-            {/* {Array.from({ length: 10 }).map((_, i) => ( */}
-            {pendingRequests.map((doc, i) => (
-              <>
-                <Card
-                  key={i}
-                  className={cn(
-                    "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
-                  )}
-                >
-                  <div className="flex gap-4 items-center">
-                    <img
-                      className={cn("h-10 w-10 rounded-full")}
-                      src="https://i.pravatar.cc/300"
-                    ></img>
-                    <div className="flex flex-col">
-                      <span className={cn("text-[1.5rem] font-bold")}>
-                        {doc.docName}
-                      </span>
-                      <div className="flex gap-8">
-                        <span className="text-[0.8rem] opacity-80">
-                          {doc.requestSender}
-                        </span>
-                        <span className="text-[0.8rem] opacity-80">
-                          Size :- {doc.fileSize}
-                        </span>
-                      </div>
+                  if (typeof value === "boolean") {
+                    displayValue = value ? "Yes" : "No";
+                  } else if (key === "createdAt") {
+                    displayValue = new Date(value).toLocaleString(); // Format date
+                  } else {
+                    displayValue = value;
+                  }
+
+                  return (
+                    <div key={propIndex} className="flex justify-between">
+                      <strong>{key}:</strong>
+                      <span>{displayValue}</span>
                     </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <Popover>
-                      <PopoverTrigger>
-                        <MoreVertical />
-                      </PopoverTrigger>
-                      <PopoverContent className="flex gap-2 flex-col">
-                        {/* <Button>Delete</Button> */}
-                        <Button
-                        disabled={isRejecting}
-                          onClick={() =>
-                            handleApprove(doc.cid, doc.requestSender)
-                          }
-                        >
-                          Accept
-                        </Button>
-                        <Button disabled={isAccepting} onClick={()=>handleReject(doc.cid,doc.requestSender)}>Reject</Button>
-                        {/* <Button>Share</Button> */}
-                      </PopoverContent>
-                    </Popover>
-                    {/* <Button variant="outline">Verify</Button> */}
-                  </div>
-                </Card>
-              </>
-            ))}
-          </div>
+                  );
+                })}
+                <button
+                  onClick={() => handleViewFile(file.cid, file.mimeType)}
+                  className="view-button"
+                >
+                  View
+                </button>
+              </Card>
+            ))
+          ) : (
+            <p>No files uploaded yet.</p>
+          )}
         </div>
       </div>
       <FileModal />
@@ -440,4 +303,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default MyUploads;
