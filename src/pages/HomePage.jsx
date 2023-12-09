@@ -8,73 +8,18 @@ import { Link } from "react-router-dom";
 import Web3 from "web3";
 import { useWallet } from "../pages/WalletAddressContext";
 import { ethers } from "ethers";
-function HomePage() {
-  // return (
-  //   <>
-  //     <Header />
-  //     <div className="min-w-screen min-h-screen w-full h-full flex items-center">
-  //       <img
-  //         src="https://wallpaperaccess.com/full/1155017.jpg"
-  //         className="absolute top-0 right-0 left-0 bottom-0 blur-[300px]"
-  //       ></img>
-  //       <div className="justify-center z-10 w-[80%] flex flex-col items-start text-left gap-2">
-  //         <Badge>
-  //           <img className="h-6 pl-2 pr-2" src={ethLogo}></img>
-  //         </Badge>
-  //         <span className="monster text-[4rem] font-bold">
-  //           Empower Your Identity, Safeguard Your Privacy with AnonVerify
-  //         </span>
-  //         <span className="opacity-80">
-  //           Seamlessly Verify Documents Without Compromising Your
-  //           Confidentiality
-  //         </span>
-  //         <div className="mt-[2rem] flex gap-4">
-  //           <Button className="flex gap-2">
-  //             <Wallet />
-  //             Connect Wallet
-  //           </Button>
-  //           <Button className="flex gap-2" variant="outline">
-  //             <Github />
-  //             View on Github
-  //           </Button>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </>
-  // );
-  const [provider, setProvider] = useState();
-  const { walletAddress, setWalletAddress } = useWallet();
-
-  const connectWalletHandler = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        const account = accounts[0];
-        setWalletAddress(account); // Set the wallet address in the global state
-
-        // Get provider from Metamask
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        setProvider(provider);
-        // Set signer
-        const signer = provider.getSigner();
-        window.location.href = `/dashboard`; // Redirect to dashboard without the address in URL
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      alert("Please install MetaMask!");
-    }
-  };
-
+function HomePage({web3Handler,walletAddress,provider,contract}) {
+  
+  // const { walletAddress, setWalletAddress } = useWallet();
+  console.log(walletAddress);
+  
   const disconnectWalletHandler = async () => {
     window.location.reload();
   }
 
   return (
     <>
-      <Header />
+      <Header web3Handler={web3Handler} walletAddress={walletAddress}/>
       {/* <div></div> */}
       <div className="min-w-screen justify-center p-[2rem] min-h-screen w-full max-w-[1280px] h-full flex items-center">
         <img
@@ -105,7 +50,7 @@ function HomePage() {
                 </Button>
               </>
             ) : (
-              <Button className="flex gap-2" onClick={connectWalletHandler}>
+              <Button className="flex gap-2" onClick={web3Handler}>
                 <Wallet />
                 Connect Wallet
               </Button>
@@ -116,6 +61,7 @@ function HomePage() {
               View on Github
             </Button>
           </div>
+          <Link to='/navigate'>Dashboard</Link>
         </div>
       </div>
     </>

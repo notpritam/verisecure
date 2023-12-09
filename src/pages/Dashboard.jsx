@@ -3,22 +3,24 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Eye, Search, Upload, UserRoundCog, Wallet } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useWallet } from "./WalletAddressContext";
 
-function Dashboard() {
+function Dashboard({web3Handler,walletAddress,provider,contract}) {
   const [showDetails, setShowDetails] = useState(false);
 
-  const { walletAddress, setWalletAddress } = useWallet();
+  // const { walletAddress, setWalletAddress } = useWallet();
   const handleShowDetails = (id) => {
     setShowDetails(true);
   };
 
   const disconnectWalletHandler = () => {
-    setWalletAddress(null); // Clear the wallet address from the context
+    location.reload; // Clear the wallet address from the context
   };
-
+  useLayoutEffect(() => {
+    console.log(walletAddress)
+  }, [walletAddress])
   return (
     <>
       <img src=""></img>
@@ -48,11 +50,11 @@ function Dashboard() {
                   </Button>
                 </>
               ) : (
-                <Link to="/">
-                  <Button variant="outline" className="flex gap-2">
-                    Connect Wallet
+                // <Link to="/">
+                  <Button variant="outline" className="flex gap-2" handleClick={web3Handler}>
+                    Connect Wallettt
                   </Button>
-                </Link>
+                // </Link>
               )}
             </Link>
           </div>
