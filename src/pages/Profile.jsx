@@ -137,7 +137,8 @@ function Profile() {
                       </PopoverTrigger>
                       <PopoverContent className="flex gap-2 flex-col">
                         {/* <Button>Delete</Button> */}
-                        <Button>View</Button>
+                        <Button>Accept</Button>
+                        <Button>Reject</Button>
                         {/* <Button>Share</Button> */}
                       </PopoverContent>
                     </Popover>

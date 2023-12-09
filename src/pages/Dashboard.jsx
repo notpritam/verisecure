@@ -82,7 +82,7 @@ function Dashboard() {
                     >
                       John Doe {i}
                     </span>
-                    <div className="flex gap-8">
+                    <div className="flex flex-col gap-2">
                       <span className="text-[0.8rem] opacity-80">
                         0x1234567890
                       </span>
