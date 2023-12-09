@@ -118,19 +118,19 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      if (signer) {
-        const user = await initPush(signer);
-        if (!user) return;
-        // userAlice.notification.list(type, {options?})
-        const inboxNotifications = await user.notification.list("INBOX");
-        console.log(inboxNotifications);
-        setNotifications(inboxNotifications);
-      }
-    };
-    fetchNotifications();
-  }, [signer]);
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     if (signer) {
+  //       const user = await initPush(signer);
+  //       if (!user) return;
+  //       // userAlice.notification.list(type, {options?})
+  //       const inboxNotifications = await user.notification.list("INBOX");
+  //       console.log(inboxNotifications);
+  //       setNotifications(inboxNotifications);
+  //     }
+  //   };
+  //   fetchNotifications();
+  // }, [signer]);
 
   if (typeof global === "undefined") {
     window.global = window;

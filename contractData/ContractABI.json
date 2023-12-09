@@ -133,6 +133,56 @@
       "inputs": [
         {
           "internalType": "string",
+          "name": "_cid",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "_requestSender",
+          "type": "address"
+        }
+      ],
+      "name": "rejectRequest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_cid",
+          "type": "string"
+        }
+      ],
+      "name": "sendRequestForApproval",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "apiKey",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
           "name": "",
           "type": "string"
         }
@@ -275,24 +325,6 @@
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "_cid",
-          "type": "string"
-        },
-        {
-          "internalType": "address",
-          "name": "_requestSender",
-          "type": "address"
-        }
-      ],
-      "name": "rejectRequest",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "",
           "type": "address"
@@ -327,19 +359,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_cid",
-          "type": "string"
-        }
-      ],
-      "name": "sendRequestForApproval",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

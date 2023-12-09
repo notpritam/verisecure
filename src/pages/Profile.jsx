@@ -31,6 +31,8 @@ import sendNotification from "@/utils/sendPushWeb3Notificatiobs";
 function Profile() {
   const [pastRequests, setPastRequests] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
+  const [isAccepting, setIsAccepting] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const signer = useVariable((state) => state.signer);
   const apiKey = useVariable((state) => state.apiKey);
@@ -114,6 +116,28 @@ function Profile() {
       console.log(error);
     }
   };
+  async function handleApprove(cid, requestSender) {
+    try {
+      setIsAccepting(true);
+      console.log(cid,requestSender)
+      await (await contract.approveRequest(cid, requestSender)).wait();
+      setIsAccepting(false);
+    } catch (error) {
+      console.log("Can't accept currently");
+    }
+  }
+  async function handleReject(cid, requestSender) {
+    try {
+      setIsRejecting(true);
+      console.log(cid,requestSender);
+      await (await contract.rejectRequest(cid, requestSender)).wait();
+      await fetchPendingRequests();
+      setIsRejecting(false);
+
+    } catch (error) {
+      console.log("Can't accept currently");
+    }
+  }
   useEffect(() => {
     if (!walletAddress || !contract) {
       alert("connect wallet");
@@ -380,7 +404,7 @@ function Profile() {
                       src="https://i.pravatar.cc/300"
                     ></img>
                     <div className="flex flex-col">
-                      <span className={cn("text-[1.5rem] font-bold")}>
+                      <span className={cn('text-[1.5rem] font-bold')}>
                         {doc.docName}
                       </span>
                       <div className="flex gap-8">
@@ -441,10 +465,15 @@ function Profile() {
                       </PopoverTrigger>
                       <PopoverContent className="flex gap-2 flex-col">
                         {/* <Button>Delete</Button> */}
-                        <Button onClick={() => AcceptRequest(doc)}>
+                        <Button
+                        disabled={isRejecting}
+                          onClick={() =>
+                            handleApprove(doc.cid, doc.requestSender)
+                          }
+                        >
                           Accept
                         </Button>
-                        <Button>Reject</Button>
+                        <Button disabled={isAccepting} onClick={()=>handleReject(doc.cid,doc.requestSender)}>Reject</Button>
                         {/* <Button>Share</Button> */}
                       </PopoverContent>
                     </Popover>

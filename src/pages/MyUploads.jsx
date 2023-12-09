@@ -30,13 +30,14 @@ function MyUploads() {
   const [selectedFile, setSelectedFile] = useState(null);
   const signer = useVariable((state) => state.signer);
   const apiKey = useVariable((state) => state.apiKey);
-  const contract = useVariable((state) => state.contract);
   const [userFiles, setUserFiles] = useState([]);
   const [otherUserFiles, setOtherUserFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFileUrl, setSelectedFileUrl] = useState(null);
   const [mimeType, setMimeType] = useState();
-
+  const walletAddress = useVariable((state) => state.walletAddress);
+  const contract = useVariable((state) => state.contract);
+  
   const signAuthMessage = async () => {
     const address = await signer.getAddress();
     const messageRequested = (await lighthouse.getAuthMessage(address)).data
@@ -78,6 +79,7 @@ function MyUploads() {
     console.log(cid, _docName, _fileSize);
     await (await contract.addDocument(cid, _docName, _fileSize)).wait();
     setSelectedFile(null);
+
     getUploads();
   };
   const handleFileUpload = () => {};
