@@ -13,6 +13,7 @@
     "@lighthouse-web3/sdk": "^0.3.0",
     "@pushprotocol/restapi": "^1.4.45",
     "@pushprotocol/uiweb": "^1.1.22",
+    "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-popover": "^1.0.7",

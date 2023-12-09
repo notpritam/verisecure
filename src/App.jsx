@@ -19,14 +19,14 @@ import sendNotification from "./utils/sendPushWeb3Notificatiobs";
 import lighthouse from "@lighthouse-web3/sdk";
 import axios from "axios";
 import MyUploads from "./pages/MyUploads";
-
+import BellIcon from "./assets/Bell_icon.svg";
 function App() {
   // const navigate = useNavigate();
   const updateWalletAddress = useVariable((state) => state.updateWalletAddress);
   const updateContractAddress = useVariable(
     (state) => state.updateContractAddress
   );
-
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const updateSinger = useVariable((state) => state.updateSinger);
   const updateAPIKey = useVariable((state) => state.updateAPIKey);
   const [account, setAccount] = useState(null);
@@ -174,7 +174,7 @@ function App() {
   return (
     <WalletProvider>
       <BrowserRouter>
-        <Routes>
+        <Routes>          
           <Route path="/" element={<Layout />}>
             <Route
               index
@@ -188,7 +188,12 @@ function App() {
               }
             />
             <Route path="dashboard" element={<Dashboard />} />
-            {/* <Route path="dashboard" element={<Dashboard walletAddress={account} contract={contract}/>} /> */}
+            <Route
+              path="dashboard"
+              element={
+                <Dashboard walletAddress={account} contract={contract} />
+              }
+            />
             <Route path="profile" element={<Profile />} />
             <Route path="myfiles" element={<MyUploads />} />
             {/* <Route path="blogs" element={<Blogs />} /> */}

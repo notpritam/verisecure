@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ethLogo from "../assets/ethIndia.svg";
 import Header from "@/components/header";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { ethers } from "ethers";
 import {
   Popover,
   PopoverContent,
@@ -27,6 +28,8 @@ import { useVariable } from "@/lib/storage";
 import lighthouse from "@lighthouse-web3/sdk";
 
 function Profile() {
+  const [pastRequests, setPastRequests] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const signer = useVariable((state) => state.signer);
   const apiKey = useVariable((state) => state.apiKey);
@@ -53,12 +56,7 @@ function Profile() {
     console.log("tr signer", signer, signerAddress);
     const signedMessage = await signAuthMessage();
     let file = event.target.files;
-    console.log(
-      file,
-      apiKey,
-      signerAddress,
-      signedMessage.signedMessage
-    )
+    console.log(file, apiKey, signerAddress, signedMessage.signedMessage);
     // Upload file with encryption
     const output = await lighthouse.uploadEncrypted(
       file,
@@ -69,7 +67,60 @@ function Profile() {
     console.log("Encrypted File Status:", output);
     getUploads();
   };
+  const navigate = useNavigate();
+  const walletAddress = useVariable((state) => state.walletAddress);
+  const contract = useVariable((state) => state.contract);
   const handleFileUpload = () => {};
+  const fetchUserFiles = async (userAddress, cid) => {
+    try {
+      // Wait for all promises to resolve
+      const docs = await contract.getSentRequests();
+      console.log(docs);
+      setPastRequests(docs);
+      console.log(docs);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchPendingRequests = async () => {
+    try {
+      let records = await contract.getPendingRequests();
+      // records=[...records];
+      console.log(records);
+      const docsPromises = records.map(async (event) => {
+        const { requestSender, cid, requestSent, acknowledgment } = event;
+        if (!requestSent || acknowledgment) return;
+
+        const fileData = await contract.documents(cid);
+        let { _a, docName, fileSize, _b } = fileData;
+        console.log(fileData, docName, fileSize);
+        fileSize = parseInt(fileSize._hex.toString());
+        console.log(fileSize);
+
+        return { cid, docName, requestSender, fileSize };
+      });
+
+      // Wait for all promises to resolve
+      const docs = await Promise.all(docsPromises);
+
+      // Wait for all promises to resolve
+      // const docs = pendingRequests();
+      console.log(docs);
+      setPendingRequests(docs);
+      console.log(docs);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (!walletAddress || !contract) {
+      alert("connect wallet");
+      navigate("/");
+    }
+    fetchUserFiles();
+    fetchPendingRequests();
+  }, []);
 
   const decryptFile = async (fileCid) => {
     try {
@@ -135,7 +186,7 @@ function Profile() {
         (file) => file !== null
       );
 
-      console.log("shared", sharedFiles)
+      console.log("shared", sharedFiles);
       setOtherUserFiles(sharedFiles);
     } catch (error) {
       console.error("Error fetching uploads:", error);
@@ -262,46 +313,9 @@ function Profile() {
         </div>
         <div className="flex w-full max-w-[1280px] gap-4">
           <div className="w-full flex flex-col gap-4 max-w-[1280px]">
-            <span className="text-[2rem] font-bold">Your Files</span>
-            {userFiles.length > 0 ? (
-              userFiles.map((file, index) => (
-                <Card
-                  key={index}
-                  className="flex flex-col gap-2 p-4 w-full max-w-[600px]"
-                >
-                  {Object.entries(file).map(([key, value], propIndex) => {
-                    let displayValue;
-
-                    if (typeof value === "boolean") {
-                      displayValue = value ? "Yes" : "No";
-                    } else if (key === "createdAt") {
-                      displayValue = new Date(value).toLocaleString(); // Format date
-                    } else {
-                      displayValue = value;
-                    }
-
-                    return (
-                      <div key={propIndex} className="flex justify-between">
-                        <strong>{key}:</strong>
-                        <span>{displayValue}</span>
-                      </div>
-                    );
-                  })}
-                  <button
-                    onClick={() => handleViewFile(file.cid, file.mimeType)}
-                    className="view-button"
-                  >
-                    View
-                  </button>
-                </Card>
-              ))
-            ) : (
-              <p>No files uploaded yet.</p>
-            )}
-          </div>
-          <div className="w-full flex flex-col gap-4 max-w-[1280px]">
-            <span className="text-[2rem] font-bold">Others Files</span>
-            {Array.from({ length: 10 }).map((_, i) => (
+            <span className="text-[2rem] font-bold">Past requests</span>
+            {/* {Array.from({ length: 10 }).map((_, i) => ( */}
+            {pastRequests.map((doc, i) => (
               <>
                 <Card
                   key={i}
@@ -316,11 +330,53 @@ function Profile() {
                     ></img>
                     <div className="flex flex-col">
                       <span className={cn("text-[1.5rem] font-bold")}>
-                        John Doe {i}
+                        {doc.docName}
                       </span>
                       <div className="flex gap-8">
                         <span className="text-[0.8rem] opacity-80">
-                          0x1234567890
+                          {doc.requestSender}
+                        </span>
+                        <span className="text-[0.8rem] opacity-80">
+                          Size :- {parseInt(doc?.fileSize._hex.toString())}kb
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleViewFile(file.cid, file.mimeType)}
+                      className="view-button"
+                    >
+                      View
+                    </button>
+                  </div>
+                </Card>
+              </>
+            ))}
+            : (<p>No files uploaded yet.</p>)
+          </div>
+
+          <div className="w-full flex flex-col gap-4 max-w-[1280px]">
+            <span className="text-[2rem] font-bold">Pending Approvals</span>
+            {/* {Array.from({ length: 10 }).map((_, i) => ( */}
+            {pendingRequests.map((doc, i) => (
+              <>
+                <Card
+                  key={i}
+                  className={cn(
+                    "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
+                  )}
+                >
+                  <div className="flex gap-4 items-center">
+                    <img
+                      className={cn("h-10 w-10 rounded-full")}
+                      src="https://i.pravatar.cc/300"
+                    ></img>
+                    <div className="flex flex-col">
+                      <span className={cn("text-[1.5rem] font-bold")}>
+                        {doc.docName}
+                      </span>
+                      <div className="flex gap-8">
+                        <span className="text-[0.8rem] opacity-80">
+                          {doc.requestSender}
                         </span>
                         <span className="text-[0.8rem] opacity-80">
                           Size :- 123Kb
@@ -335,7 +391,8 @@ function Profile() {
                       </PopoverTrigger>
                       <PopoverContent className="flex gap-2 flex-col">
                         {/* <Button>Delete</Button> */}
-                        <Button>View</Button>
+                        <Button>Accept</Button>
+                        <Button>Reject</Button>
                         {/* <Button>Share</Button> */}
                       </PopoverContent>
                     </Popover>
