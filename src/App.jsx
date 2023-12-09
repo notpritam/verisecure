@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import Dashboard from "./pages/Dashboard";
 import Layout from "./pages/Outlet";
 import Page404 from "./pages/Page404";
+import Profile from "./pages/Profile";
 import { WalletProvider } from "./pages/WalletAddressContext";
 // import ContractAddress from '.././contractsData/ContractAddress.json';
 import ContractAddress from '../contractData/ContractAddress.json';
@@ -49,7 +50,7 @@ function App() {
         await web3Handler()
       })
       loadContracts(signer)
-      navigat
+      // navigat
   } catch (error) {
     console.log(error);
   }
@@ -75,7 +76,8 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage web3Handler={web3Handler} walletAddress={account} provider={provider} contract={contract}/>} />
             <Route path="dashboard" element={<Dashboard web3Handler={web3Handler} walletAddress={account} provider={provider} contract={contract}/>} />
-            {/* <Route path="blogs" element={<Blogs />} /> */}
+            <Route path="profile" element={<Profile />} />
+          {/* <Route path="blogs" element={<Blogs />} /> */}
             {/* <Route path="contact" element={<Contact />} /> */}
             <Route path="*" element={<Page404 />} />
           </Route>

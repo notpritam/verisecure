@@ -61,7 +61,15 @@ function HomePage({web3Handler,walletAddress,provider,contract}) {
               View on Github
             </Button>
           </div>
-          <Link to='/navigate'>Dashboard</Link>
+          <Link to={{
+              pathname: '/dashboard',
+              state: {
+                web3Handler,
+                walletAddress,
+                provider,
+                contract,
+              },
+            }}>Dashboard</Link>
         </div>
       </div>
     </>
