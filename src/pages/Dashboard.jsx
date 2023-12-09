@@ -1,8 +1,29 @@
+import CustomButton from "@/components/custombutton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Eye, Search, Upload, UserRoundCog, Wallet } from "lucide-react";
+import { DialogClose } from "@radix-ui/react-dialog";
+import {
+  Eye,
+  Lock,
+  Search,
+  ShieldEllipsis,
+  Upload,
+  UserRoundCog,
+  View,
+  Wallet,
+} from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -13,7 +34,7 @@ function Dashboard() {
     setShowDetails(true);
   };
   return (
-    <>
+    <Dialog>
       <img src=""></img>
       <header className="flex z-[999] items-center border-b-2 pb-4 backdrop-blur-xl fixed top-0 left-0 right-0 pl-[4rem] pr-[4rem] p-4 dark justify-between">
         <div className="flex items-center justify-between w-full">
@@ -60,47 +81,117 @@ function Dashboard() {
 
           <div className="flex flex-col mt-[6rem] items-center gap-6 overflow-hidden overflow-y-scroll hide-scrollbar w-full h-screen ">
             {Array.from({ length: 20 }).map((_, i) => (
-              <>
-                <Card
-                  className={cn(
-                    "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
-                  )}
-                >
-                  <div className="flex gap-4 items-center">
-                    <img
+              <Card
+                key={i}
+                className={cn(
+                  "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
+                )}
+              >
+                <div className="flex gap-4 items-center">
+                  <img
+                    className={cn(
+                      "h-10 w-10 rounded-full",
+                      showDetails == true ? "hidden" : ""
+                    )}
+                    src="https://i.pravatar.cc/300"
+                  ></img>
+                  <div className="flex flex-col">
+                    <span
                       className={cn(
-                        "h-10 w-10 rounded-full",
-                        showDetails == true ? "hidden" : ""
+                        "text-[1.5rem] font-bold",
+                        showDetails == true ? "text-[1rem]" : ""
                       )}
-                      src="https://i.pravatar.cc/300"
-                    ></img>
-                    <div className="flex flex-col">
-                      <span
-                        className={cn(
-                          "text-[1.5rem] font-bold",
-                          showDetails == true ? "text-[1rem]" : ""
-                        )}
-                      >
-                        John Doe {i}
-                      </span>
-                      <span className="text-[0.8rem] opacity-80">
-                        0x1234567890
-                      </span>
-                    </div>
+                    >
+                      John Doe {i}
+                    </span>
+                    <span className="text-[0.8rem] opacity-80">
+                      0x1234567890
+                    </span>
                   </div>
-                  <div className="flex gap-4">
+                </div>
+                <div className="flex gap-4">
+                  {i % 2 == 0 ? (
+                    <>
+                      <DialogTrigger asChild>
+                        <Button
+                          // onClick={() => onClickVersion(data)}
+                          variant="outline"
+                          className="flex gap-2 items-center "
+                        >
+                          {/* <Eye /> */}
+                          <Lock />
+                          Request Access
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Ask for Access</DialogTitle>
+                          <DialogDescription>
+                            You are about to request access to this user's info.
+                          </DialogDescription>
+                        </DialogHeader>
+                        {/* <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">
+                              Name
+                            </Label>
+                            <Input
+                              id="name"
+                              defaultValue="Pedro Duarte"
+                              className="col-span-3"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="username" className="text-right">
+                              Username
+                            </Label>
+                            <Input
+                              id="username"
+                              defaultValue="@peduarte"
+                              className="col-span-3"
+                            />
+                          </div>
+                        </div> */}
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button
+                              onClick={() => console.log("handling access")}
+                              type="submit"
+                            >
+                              Request Access
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </>
+                  ) : i % 3 == 0 ? (
+                    <>
+                      {" "}
+                      <Button
+                        onClick={() => onClick(data)}
+                        variant="outline"
+                        className="flex gap-2 items-center "
+                      >
+                        {/* <Eye /> */}
+                        <ShieldEllipsis />
+                        Pending Access
+                      </Button>
+                    </>
+                  ) : (
                     <Button
                       onClick={() => handleShowDetails(i)}
                       variant="outline"
                       className="flex gap-2 items-center "
                     >
-                      <Eye />
-                      View Files
+                      {/* <Eye /> */}
+                      {/* <ShieldEllipsis /> */}
+                      <View color="#262e9c" />
+                      Already Viewed
                     </Button>
-                    {/* <Button variant="outline">Verify</Button> */}
-                  </div>
-                </Card>
-              </>
+                  )}
+                  {/* <Button variant="outline">Verify</Button> */}
+                </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -115,7 +206,7 @@ function Dashboard() {
           </>
         )}
       </div>
-    </>
+    </Dialog>
   );
 }
 
