@@ -83,8 +83,8 @@ function HomePage() {
 
         <div className="grid w-full max-w-[1280px] gap-4 grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Card className="w-full ">
-              <Avatar>
+            <Card className="w-full flex flex-col items-start p-4 pt-12 pb-12 gap-4 ">
+              <Avatar className="h-[4rem] w-[4rem]">
                 <AvatarImage
                   src="https://github.com/shadcn.png"
                   alt="@shadcn"
