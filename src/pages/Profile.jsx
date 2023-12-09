@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Github,
   Lock,
+  MoreVertical,
   ShieldEllipsis,
   Upload,
   UserRoundCog,
@@ -17,6 +18,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 function Profile() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -72,7 +78,7 @@ function Profile() {
             )}
           </Card>
         </div>
-        <div className="flex gap-4">
+        <div className="flex w-full max-w-[1280px] gap-4">
           <div className="w-full flex flex-col gap-4 max-w-[1280px]">
             <span className="text-[2rem] font-bold">Your Files</span>
             {Array.from({ length: 10 }).map((_, i) => (
@@ -103,51 +109,24 @@ function Profile() {
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    {i % 2 == 0 ? (
-                      <>
-                        <Button
-                          // onClick={() => onClickVersion(data)}
-                          variant="outline"
-                          className="flex gap-2 items-center "
-                        >
-                          {/* <Eye /> */}
-                          <Lock />
-                          Request Access
-                        </Button>
-                      </>
-                    ) : i % 3 == 0 ? (
-                      <>
-                        {" "}
-                        <Button
-                          // onClick={() => onClick(data)}
-                          variant="outline"
-                          className="flex gap-2 items-center "
-                        >
-                          {/* <Eye /> */}
-                          <ShieldEllipsis />
-                          Pending Access
-                        </Button>
-                      </>
-                    ) : (
-                      <Button
-                        //   onClick={() => handleShowDetails(i)}
-                        variant="outline"
-                        className="flex gap-2 items-center "
-                      >
-                        {/* <Eye /> */}
-                        {/* <ShieldEllipsis /> */}
-                        <View color="#262e9c" />
-                        Already Viewed
-                      </Button>
-                    )}
-                    {/* <Button variant="outline">Verify</Button> */}
+                    <Popover>
+                      <PopoverTrigger>
+                        <MoreVertical />
+                      </PopoverTrigger>
+                      <PopoverContent className="flex gap-2 flex-col">
+                        <Button>Delete</Button>
+                        <Button>View</Button>
+                        <Button>Share</Button>
+                        <Button>Revoke Access</Button>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </Card>
               </>
             ))}
           </div>
           <div className="w-full flex flex-col gap-4 max-w-[1280px]">
-            <span className="text-[2rem] font-bold">Viewed Files</span>
+            <span className="text-[2rem] font-bold">Others Files</span>
             {Array.from({ length: 10 }).map((_, i) => (
               <>
                 <Card
@@ -176,43 +155,16 @@ function Profile() {
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    {i % 2 == 0 ? (
-                      <>
-                        <Button
-                          // onClick={() => onClickVersion(data)}
-                          variant="outline"
-                          className="flex gap-2 items-center "
-                        >
-                          {/* <Eye /> */}
-                          <Lock />
-                          Request Access
-                        </Button>
-                      </>
-                    ) : i % 3 == 0 ? (
-                      <>
-                        {" "}
-                        <Button
-                          // onClick={() => onClick(data)}
-                          variant="outline"
-                          className="flex gap-2 items-center "
-                        >
-                          {/* <Eye /> */}
-                          <ShieldEllipsis />
-                          Pending Access
-                        </Button>
-                      </>
-                    ) : (
-                      <Button
-                        //   onClick={() => handleShowDetails(i)}
-                        variant="outline"
-                        className="flex gap-2 items-center "
-                      >
-                        {/* <Eye /> */}
-                        {/* <ShieldEllipsis /> */}
-                        <View color="#262e9c" />
-                        Already Viewed
-                      </Button>
-                    )}
+                    <Popover>
+                      <PopoverTrigger>
+                        <MoreVertical />
+                      </PopoverTrigger>
+                      <PopoverContent className="flex gap-2 flex-col">
+                        {/* <Button>Delete</Button> */}
+                        <Button>View</Button>
+                        {/* <Button>Share</Button> */}
+                      </PopoverContent>
+                    </Popover>
                     {/* <Button variant="outline">Verify</Button> */}
                   </div>
                 </Card>
