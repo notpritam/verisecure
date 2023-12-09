@@ -36,7 +36,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [provider, setProvider] = useState(true);
   const [signer, setSigner] = useState();
-
+  const contractAdd = useVariable((state) => state.contract);
   const signAuthMessage = async (_signer, verificationMessage) => {
     const address = await _signer.getAddress();
     const signedMessage = await _signer.signMessage(verificationMessage);
@@ -46,7 +46,7 @@ function App() {
     };
   };
 
-  const generateAPIKey = async (_signer) => {
+  const generateAPIKey = async (_signer, _contract) => {
     const address = await _signer.getAddress();
     const verificationMessage = (
       await axios.get(
@@ -60,6 +60,13 @@ function App() {
     );
     console.log(response);
     updateAPIKey(response.data.apiKey);
+    console.log(contract, _contract);
+    const fileData = await _contract.apiKey(signedMessage.publicKey);
+    console.log("fileData", fileData);
+    if (!fileData) {
+        console.log("Adding key")
+      await (await _contract.setApiKey(response.data.apiKey)).wait();
+    }
   };
 
   const web3Handler = async () => {
@@ -85,7 +92,6 @@ function App() {
       console.log("signer in app.js", signer);
       setSigner(signer);
       updateSinger(signer);
-      generateAPIKey(signer);
       console.log(signer, signer.address);
       // setAccount(signer.address)
       console.log(account);
@@ -99,8 +105,7 @@ function App() {
 
         await web3Handler();
       });
-      loadContracts(signer, account);
-
+      await loadContracts(signer, account);
       // const testSendNotification = async (signer) => {
       //   if (signer) {
       //     const addresses = ["0x1d37B1700Eb4a8B4fEa710182552CAe85b5eF0E6"]; // Replace with valid Ethereum addresses
@@ -155,6 +160,7 @@ function App() {
       signer
     );
     setContract(contract);
+    await generateAPIKey(signer, contract);
 
     console.log("contract", contract);
     setLoading(false);
@@ -174,7 +180,7 @@ function App() {
   return (
     <WalletProvider>
       <BrowserRouter>
-        <Routes>          
+        <Routes>
           <Route path="/" element={<Layout />}>
             <Route
               index
