@@ -169,6 +169,8 @@ function Profile() {
   const decryptFile = async (fileCid) => {
     try {
       const getFileInfo = await lighthouse.getFileInfo(fileCid);
+      const response = await lighthouse.getAccessConditions(fileCid);
+      console.log(response)
       const fileType = getFileInfo.data.mimeType;
       const { publicKey, signedMessage } = await signAuthMessage();
       const keyObject = await lighthouse.fetchEncryptionKey(
@@ -431,13 +433,13 @@ function Profile() {
                           {doc?.docOwner}
                         </span>
                         <span className="text-[0.8rem] opacity-80">
-                          Size :- {parseInt(doc?.fileSize._hex.toString())}KB
+                          Size :- {parseInt(doc?.fileSize?._hex?.toString())}KB
                         </span>
                       </div>
                     </div>
                     {doc?.acknowledgment ? (
                       <button
-                        onClick={() => handleViewFile(file.cid, file.mimeType)}
+                        onClick={() => handleViewFile(doc?.cid, doc?.mimeType)}
                         className="view-button"
                       >
                         View
