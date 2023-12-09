@@ -101,7 +101,7 @@ function App() {
               }
             />
             <Route path="dashboard" element={<Dashboard />} />
-            {/* <Route path="dashboard" element={<Dashboard walletAddress={account} contract={contract}/>} /> */}
+            <Route path="dashboard" element={<Dashboard walletAddress={account} contract={contract}/>} />
             <Route path="profile" element={<Profile />} />
             {/* <Route path="blogs" element={<Blogs />} /> */}
             {/* <Route path="contact" element={<Contact />} /> */}
