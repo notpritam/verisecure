@@ -34,12 +34,15 @@ import { useNavigate, useLocation } from 'react-router-dom';
 function Dashboard() {
   const [showDetails, setShowDetails] = useState(false);
   const [documents, setDocuments] = useState([]);
+  const [approvalLoading, setApprovalLoading] = useState(false);
   const walletAddress = useVariable((state) => state.walletAddress);
   const contract = useVariable((state) => state.contract);
   const navigate = useNavigate();
   const handleShowDetails = (id) => {
     setShowDetails(true);
   };
+
+  const [currentSelectedUser, setCurrentSelectedUser] = useState('');
 
   const disconnectWalletHandler = () => {
     location.reload; // Clear the wallet address from the context
@@ -61,6 +64,55 @@ function Dashboard() {
       return null;
     }
   };
+  async function handleRequestAccessForApproval(cid, docName) {
+    setApprovalLoading(true);
+    // setCurrentSelectedUser(cid);
+    console.log(cid);
+    try {
+      await(await contract.sendRequestForApproval(cid)).wait();
+      // console.log(request);
+      await fetchDocuments();
+      // setApprovalLoading((approvalLoading) => !approvalLoading);
+      setApprovalLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const fetchDocuments = async () => {
+    try {
+      // const x=await contract.queryFilter("*");
+      console.log('-----');
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const blockNumber = await provider.getBlockNumber();
+      // Query for past events
+      const events = await contract.queryFilter(
+        'DocumentAdded',
+        35799782,
+        blockNumber
+      );
+      console.log('***', events);
+
+      // Use Promise.all to wait for all promises to resolve
+      const docsPromises = events.map(async (event) => {
+        const { cid, docName, uploader } = event.args;
+        let fileSize = await contract.documents(cid);
+        fileSize=parseInt(fileSize.fileSize._hex.toString())
+        console.log(fileSize);
+        const info = await getRequestInfo(walletAddress, cid);
+        const reqParam = info % 3;
+
+        return { cid, docName, uploader, fileSize, reqParam };
+      });
+
+      // Wait for all promises to resolve
+      const docs = await Promise.all(docsPromises);
+
+      setDocuments(docs);
+      console.log(docs);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useLayoutEffect(() => {
     console.log(walletAddress);
   }, [walletAddress]);
@@ -72,44 +124,6 @@ function Dashboard() {
       navigate('/');
       return;
     }
-    const fetchDocuments = async () => {
-      try {
-        // const x=await contract.queryFilter("*");
-        console.log('-----');
-
-        // Define the event filter for DocumentAdded
-        // const filter = contract.filters.DocumentAdded(null, null, null);
-        // console.log('***',filter);
-        // console.log('***',filter.topics[0].toString());
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const blockNumber = await provider.getBlockNumber();
-        // Query for past events
-        const events = await contract.queryFilter(
-          'DocumentAdded',
-          35799782,
-          blockNumber
-        );
-        console.log('***', events);
-
-        // Use Promise.all to wait for all promises to resolve
-        const docsPromises = events.map(async (event) => {
-          const { cid, docName, uploader } = event.args;
-          const size = await contract.documents(cid);
-          const info = await getRequestInfo(walletAddress, cid);
-          const reqParam = info % 3;
-
-          return { cid, docName, uploader, size, reqParam };
-        });
-
-        // Wait for all promises to resolve
-        const docs = await Promise.all(docsPromises);
-
-        setDocuments(docs);
-        console.log(docs);
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
     fetchDocuments();
   }, []);
@@ -200,30 +214,32 @@ function Dashboard() {
                       )}
                     >
                       {/* John Doe {i} */}
-                      {doc.docName}
+                      {doc.docName} 
+                      {/* {doc.reqParam} {doc.cid} */}
                     </span>
                     <div className="flex gap-8">
                       <span className="text-[0.8rem] opacity-80">
                         {doc.uploader}
                       </span>
                       <span className="text-[0.8rem] opacity-80">
-                        Size :{doc.fileSize}
+                        Size :{doc.fileSize}kb
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  {i % 2 == 0 ? (
+                  {doc.reqParam % 3 == 0 ? (
                     <>
                       <DialogTrigger asChild>
                         <Button
-                          // onClick={() => onClickVersion(data)}
+                          onClick={() => setCurrentSelectedUser(doc.cid)}
                           variant="outline"
                           className="flex gap-2 items-center "
                         >
                           {/* <Eye /> */}
                           <Lock />
-                          Request Access
+                          Request Access 
+                          {/* {i} {doc.cid} */}
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[425px]">
@@ -237,21 +253,29 @@ function Dashboard() {
                         <DialogFooter>
                           <DialogClose asChild>
                             <Button
-                              onClick={() => console.log('handling access')}
+                              onClick={() =>
+                                handleRequestAccessForApproval(
+                                  currentSelectedUser,
+                                  doc.docName
+                                )
+                              }
                               type="submit"
                             >
-                              Request Access
+                              Request Access 
+                              {/* {currentSelectedUser} */}
                             </Button>
                           </DialogClose>
                         </DialogFooter>
                       </DialogContent>
                     </>
-                  ) : i % 3 == 0 ? (
+                  ) : doc.reqParam % 3 == 1 ? (
                     <>
                       {' '}
                       <Button
-                        onClick={() => onClick(data)}
-                        variant="outline"
+                        // onClick={() => onClick(data)}
+                        // variant="outline"
+                        // disabled
+                        // cusrsor={arrow}
                         className="flex gap-2 items-center "
                       >
                         {/* <Eye /> */}
@@ -269,7 +293,7 @@ function Dashboard() {
                       {/* <ShieldEllipsis /> */}
                       <View color="#262e9c" />
                       {/* Already Viewed */}
-                      Request Sent
+                      Approved
                     </Button>
                   )}
                   {/* <Button variant="outline">Verify</Button> */}

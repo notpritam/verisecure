@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 const variables = (set) => ({
-  name: '',
-  isBatchManager: false,
-  batchNumber: null,
+//   name: '',
+//   isBatchManager: false,
+//   batchNumber: null,
   walletAddress: null,
   contract: null,
 

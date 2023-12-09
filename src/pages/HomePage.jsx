@@ -68,6 +68,10 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
               pathname: '/dashboard'
              
             }}>Dashboard</Link>
+            <Link to={{
+              pathname: '/profile'
+             
+            }}>Profile</Link>
           {/* <button
             onClick={navigate('/dashboard', {
               state: {

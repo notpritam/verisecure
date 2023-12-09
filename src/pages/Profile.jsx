@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
-import ethLogo from "../assets/ethIndia.svg";
-import Header from "@/components/header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from 'react-router-dom';
+import ethLogo from '../assets/ethIndia.svg';
+import Header from '@/components/header';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Github,
   Lock,
@@ -12,37 +12,96 @@ import {
   UserRoundCog,
   View,
   Wallet,
-} from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import React, { useState } from "react";
-import { cn } from "@/lib/utils";
+} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import React, { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { ethers } from 'ethers';
+
+import { useEffect } from 'react';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
+import { useVariable } from '@/lib/storage';
 
 function Profile() {
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [pastRequests, setPastRequests] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
   const handleFileChange = (event) => {
     setSelectedFile(URL.createObjectURL(event.target.files[0]));
   };
+  const navigate = useNavigate();
+  const walletAddress = useVariable((state) => state.walletAddress);
+  const contract = useVariable((state) => state.contract);
   const handleFileUpload = () => {};
+  const fetchUserFiles  = async (userAddress, cid) => {
+    try {
+      // Wait for all promises to resolve
+      const docs = await contract.getSentRequests();
+      console.log(docs);
+      setPastRequests(docs);
+      console.log(docs);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchPendingRequests=async()=>{
+    try {
+      let records = await contract.getPendingRequests();
+      // records=[...records];
+      console.log(records);
+      const docsPromises = records.map(async (event) => {
+        const { requestSender, cid, requestSent,acknowledgment } = event;
+        if(!requestSent || acknowledgment)return;
+        
+        const fileData = await contract.documents(cid);
+        let {_a,docName,fileSize,_b}=fileData;
+        console.log(fileData,docName,fileSize)
+        fileSize=parseInt(fileSize._hex.toString())
+        console.log(fileSize);
+        
+
+        return { cid, docName, requestSender, fileSize };
+      });
+
+      // Wait for all promises to resolve
+      const docs = await Promise.all(docsPromises);
+
+      // Wait for all promises to resolve
+      // const docs = pendingRequests();
+      console.log(docs);
+      setPendingRequests(docs);
+      console.log(docs);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    if (!walletAddress || !contract) {
+      alert('connect wallet');
+      navigate('/');
+    }
+    fetchUserFiles();
+    fetchPendingRequests();
+  }, []);
 
   return (
     <>
       <header className="flex z-[999] items-center border-b-2 pb-4 backdrop-blur-xl fixed top-0 left-0 right-0 pl-[4rem] pr-[4rem] p-4 dark justify-between">
         <div className="flex items-center justify-between w-full">
-          <Link to={"/"}>
+          <Link to={'/'}>
             <span className="text-[1.5rem] tracking-wide font-bold">
               AnonVerify
             </span>
           </Link>
           <div className="flex gap-4">
-            <Link to={"/profile?action=upload"}>
+            <Link to={'/profile?action=upload'}>
               {/* <Button className="flex gap-2">
                 <Upload />
                 Upload Files
@@ -79,31 +138,34 @@ function Profile() {
           </Card>
         </div>
         <div className="flex w-full max-w-[1280px] gap-4">
+
+
           <div className="w-full flex flex-col gap-4 max-w-[1280px]">
-            <span className="text-[2rem] font-bold">Your Files</span>
-            {Array.from({ length: 10 }).map((_, i) => (
+            <span className="text-[2rem] font-bold">Past requests</span>
+            {/* {Array.from({ length: 10 }).map((_, i) => ( */}
+            {pastRequests.map((doc, i) => (
               <>
                 <Card
                   key={i}
                   className={cn(
-                    "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
+                    'flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center'
                   )}
                 >
                   <div className="flex gap-4 items-center">
                     <img
-                      className={cn("h-10 w-10 rounded-full")}
+                      className={cn('h-10 w-10 rounded-full')}
                       src="https://i.pravatar.cc/300"
                     ></img>
                     <div className="flex flex-col">
-                      <span className={cn("text-[1.5rem] font-bold")}>
-                        John Doe {i}
+                      <span className={cn('text-[1.5rem] font-bold')}>
+                       {doc.docName}
                       </span>
                       <div className="flex gap-8">
                         <span className="text-[0.8rem] opacity-80">
-                          0x1234567890
+                          {doc.requestSender}
                         </span>
                         <span className="text-[0.8rem] opacity-80">
-                          Size :- 123Kb
+                          Size :- {parseInt(doc?.fileSize._hex.toString())}kb
                         </span>
                       </div>
                     </div>
@@ -125,28 +187,33 @@ function Profile() {
               </>
             ))}
           </div>
+
+
+
           <div className="w-full flex flex-col gap-4 max-w-[1280px]">
-            <span className="text-[2rem] font-bold">Others Files</span>
-            {Array.from({ length: 10 }).map((_, i) => (
+            <span className="text-[2rem] font-bold">Pending Approvals</span>
+            {/* {Array.from({ length: 10 }).map((_, i) => ( */}
+            {pendingRequests.map((doc, i) => (
+
               <>
                 <Card
                   key={i}
                   className={cn(
-                    "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
+                    'flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center'
                   )}
                 >
                   <div className="flex gap-4 items-center">
                     <img
-                      className={cn("h-10 w-10 rounded-full")}
+                      className={cn('h-10 w-10 rounded-full')}
                       src="https://i.pravatar.cc/300"
                     ></img>
                     <div className="flex flex-col">
-                      <span className={cn("text-[1.5rem] font-bold")}>
-                        John Doe {i}
+                      <span className={cn('text-[1.5rem] font-bold')}>
+                        {doc.docName}
                       </span>
                       <div className="flex gap-8">
                         <span className="text-[0.8rem] opacity-80">
-                          0x1234567890
+                          {doc.requestSender}
                         </span>
                         <span className="text-[0.8rem] opacity-80">
                           Size :- 123Kb
