@@ -28,17 +28,15 @@ function Header() {
         </Link>
 
         <div className="flex gap-4">
-          {location.pathname === "/profile" ? (
-            <>
-              <Link to={"/profile?action=upload"}>
-                <Button className="flex gap-2">
-                  <Upload />
-                  Upload Files
-                </Button>
-              </Link>
-            </>
-          ) : (
+          {location.pathname.includes("/profile") && isUserLoggedIn == false ? (
             ""
+          ) : (
+            <Link to={"/profile?action=upload"}>
+              <Button className="flex gap-2">
+                <Upload />
+                Upload Files
+              </Button>
+            </Link>
           )}
 
           {isUserLoggedIn ? (

@@ -34,30 +34,6 @@ function Profile() {
 
   return (
     <>
-      <header className="flex z-[999] items-center border-b-2 pb-4 backdrop-blur-xl fixed top-0 left-0 right-0 pl-[4rem] pr-[4rem] p-4 dark justify-between">
-        <div className="flex items-center justify-between w-full">
-          <Link to={"/"}>
-            <span className="text-[1.5rem] tracking-wide font-bold">
-              AnonVerify
-            </span>
-          </Link>
-          <div className="flex gap-4">
-            <Link to={"/profile?action=upload"}>
-              {/* <Button className="flex gap-2">
-                <Upload />
-                Upload Files
-              </Button> */}
-            </Link>
-            <Link to="/profile">
-              <Button variant="outline" className="flex gap-2">
-                <UserRoundCog />
-                Your Profile
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
       <div className="w-full h-full flex flex-col mt-[4rem] justify-center items-center">
         <div className="min-w-screen justify-center flex p-[2rem]  w-full max-w-[1280px] h-full items-center">
           <Card className="p-6 items-center flex flex-col gap-4 justify-center w-full">
