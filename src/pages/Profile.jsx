@@ -139,6 +139,8 @@ function Profile() {
       setIsAccepting(true);
       console.log(cid, requestSender);
       await (await contract.approveRequest(cid, requestSender)).wait();
+      const fileData = await contract.documents(cid);
+      await AcceptRequest(fileData);
       setIsAccepting(false);
     } catch (error) {
       console.log("Can't accept currently");
