@@ -201,9 +201,9 @@ function App() {
             <Route path="*" element={<Page404 />} />
           </Route>
         </Routes>
-        {notifications && (
+        {/* {notifications && (
           <Notifications notifications={notifications}></Notifications>
-        )}
+        )} */}
       </BrowserRouter>
     </WalletProvider>
   );

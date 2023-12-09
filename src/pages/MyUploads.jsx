@@ -30,6 +30,7 @@ function MyUploads() {
   const [selectedFile, setSelectedFile] = useState(null);
   const signer = useVariable((state) => state.signer);
   const apiKey = useVariable((state) => state.apiKey);
+  const contract = useVariable((state) => state.contract);
   const [userFiles, setUserFiles] = useState([]);
   const [otherUserFiles, setOtherUserFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,6 +63,21 @@ function MyUploads() {
       signedMessage.signedMessage
     );
     console.log("Encrypted File Status:", output);
+    let cid;
+    let _docName;
+    let _fileSize;
+    if (output?.data?.fileList) {
+      cid = output.data.fileList[0].cid;
+      _docName = output.data.fileList[0].fileName;
+      _fileSize = Math.round(Number(output.data.fileList[0].fileSizeInBytes) / 1024);
+    } else {
+      cid = output.data[0].Hash;
+      _docName = output.data[0].Name;
+      _fileSize = Math.round(Number(output.data[0].Size) / 1024);
+    }
+    console.log(cid, _docName, _fileSize);
+    await (await contract.addDocument(cid, _docName, _fileSize)).wait();
+    setSelectedFile(null);
     getUploads();
   };
   const handleFileUpload = () => {};

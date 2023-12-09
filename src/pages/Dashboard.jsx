@@ -1,7 +1,7 @@
-import CustomButton from '@/components/custombutton';
-import Header from '@/components/header';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import CustomButton from "@/components/custombutton";
+import Header from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -10,14 +10,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useVariable } from '@/lib/storage';
-import { cn } from '@/lib/utils';
-import { ethers } from 'ethers';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useVariable } from "@/lib/storage";
+import { cn } from "@/lib/utils";
+import { ethers } from "ethers";
 
-import { DialogClose } from '@radix-ui/react-dialog';
+import { DialogClose } from "@radix-ui/react-dialog";
 import {
   Eye,
   Lock,
@@ -27,10 +27,10 @@ import {
   UserRoundCog,
   View,
   Wallet,
-} from 'lucide-react';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate, useLocation } from 'react-router-dom';
+} from "lucide-react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 function Dashboard() {
   const [showDetails, setShowDetails] = useState(false);
   const [documents, setDocuments] = useState([]);
@@ -42,7 +42,7 @@ function Dashboard() {
     setShowDetails(true);
   };
 
-  const [currentSelectedUser, setCurrentSelectedUser] = useState('');
+  const [currentSelectedUser, setCurrentSelectedUser] = useState("");
 
   const disconnectWalletHandler = () => {
     location.reload; // Clear the wallet address from the context
@@ -54,13 +54,13 @@ function Dashboard() {
       const requestInfo = await contract.requestAccess(userAddress, cid);
 
       // Now requestInfo contains the data from the mapping for the specified userAddress and cid
-      console.log('Request Information:', requestInfo);
+      console.log("Request Information:", requestInfo);
       if (requestInfo.requestSent) return 1;
       if (requestInfo.acknowledgment) return 2;
 
       return 0;
     } catch (error) {
-      console.error('Error retrieving request information:', error);
+      console.error("Error retrieving request information:", error);
       return null;
     }
   };
@@ -69,7 +69,7 @@ function Dashboard() {
     // setCurrentSelectedUser(cid);
     console.log(cid);
     try {
-      await(await contract.sendRequestForApproval(cid)).wait();
+      await (await contract.sendRequestForApproval(cid)).wait();
       // console.log(request);
       await fetchDocuments();
       // setApprovalLoading((approvalLoading) => !approvalLoading);
@@ -81,22 +81,22 @@ function Dashboard() {
   const fetchDocuments = async () => {
     try {
       // const x=await contract.queryFilter("*");
-      console.log('-----');
+      console.log("-----");
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const blockNumber = await provider.getBlockNumber();
       // Query for past events
       const events = await contract.queryFilter(
-        'DocumentAdded',
+        "DocumentAdded",
         35799782,
         blockNumber
       );
-      console.log('***', events);
+      console.log("***", events);
 
       // Use Promise.all to wait for all promises to resolve
       const docsPromises = events.map(async (event) => {
         const { cid, docName, uploader } = event.args;
         let fileSize = await contract.documents(cid);
-        fileSize=parseInt(fileSize.fileSize._hex.toString())
+        fileSize = parseInt(fileSize.fileSize._hex.toString());
         console.log(fileSize);
         const info = await getRequestInfo(walletAddress, cid);
         const reqParam = info % 3;
@@ -120,8 +120,8 @@ function Dashboard() {
   useEffect(() => {
     console.log(walletAddress, contract);
     if (!walletAddress || !contract) {
-      console.log('address', contract);
-      navigate('/');
+      console.log("address", contract);
+      navigate("/");
       return;
     }
 
@@ -138,20 +138,20 @@ function Dashboard() {
       <div className="min-h-screen z-[1] relative h-screen w-screen overflow-x-hidden flex items-center gap-[4rem]  justify-center min-w-screen">
         <div
           className={cn(
-            'w-full max-w-[1280px] gap-4 items-center  justify-center flex flex-col p-2 min-h-[600px] mt-[8rem] border',
-            showDetails == true ? 'w-[20%] mt-[6rem]' : ''
+            "w-full max-w-[1280px] gap-4 items-center  justify-center flex flex-col p-2 min-h-[600px] mt-[8rem] border",
+            showDetails == true ? "w-[20%] mt-[6rem]" : ""
           )}
         >
           <div
             className={cn(
-              'flex sticky top-0 justify-center min-h-[200px] backdrop-blur-lg items-center gap-6 w-full',
-              showDetails == true ? 'min-h-[80px] sticky top-[4rem]' : ''
+              "flex sticky top-0 justify-center min-h-[200px] backdrop-blur-lg items-center gap-6 w-full",
+              showDetails == true ? "min-h-[80px] sticky top-[4rem]" : ""
             )}
           >
             <Input
               className="max-w-[600px] w-full"
               placeholder="Enter User Id"
-            />{' '}
+            />{" "}
             <Button variant="outline" className="">
               <Search />
             </Button>
@@ -163,26 +163,26 @@ function Dashboard() {
               <Card
                 key={i}
                 className={cn(
-                  'flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center'
+                  "flex gap-4 p-2 pl-6 pr-6 w-full justify-between max-w-[600px] items-center"
                 )}
               >
                 <div className="flex gap-4 items-center">
                   <img
                     className={cn(
-                      'h-10 w-10 rounded-full',
-                      showDetails == true ? 'hidden' : ''
+                      "h-10 w-10 rounded-full",
+                      showDetails == true ? "hidden" : ""
                     )}
                     src="https://i.pravatar.cc/300"
                   ></img>
                   <div className="flex flex-col">
                     <span
                       className={cn(
-                        'text-[1.5rem] font-bold',
-                        showDetails == true ? 'text-[1rem]' : ''
+                        "text-[1.5rem] font-bold",
+                        showDetails == true ? "text-[1rem]" : ""
                       )}
                     >
                       {/* John Doe {i} */}
-                      {doc.docName} 
+                      {doc.docName}
                       {/* {doc.reqParam} {doc.cid} */}
                     </span>
                     <div className="flex flex-col gap-2">
@@ -201,12 +201,19 @@ function Dashboard() {
                       <DialogTrigger asChild>
                         <Button
                           onClick={() => setCurrentSelectedUser(doc.cid)}
+                          disabled={
+                            String(doc?.uploader).toLowerCase() ===
+                            String(walletAddress).toLowerCase()
+                          }
                           variant="outline"
                           className="flex gap-2 items-center "
                         >
                           {/* <Eye /> */}
                           <Lock />
-                          Request Access 
+                          {String(doc?.uploader).toLowerCase() ===
+                          String(walletAddress).toLowerCase()
+                            ? "Owner"
+                            : "Request Access"}
                           {/* {i} {doc.cid} */}
                         </Button>
                       </DialogTrigger>
@@ -229,7 +236,7 @@ function Dashboard() {
                               }
                               type="submit"
                             >
-                              Request Access 
+                              Request Access
                               {/* {currentSelectedUser} */}
                             </Button>
                           </DialogClose>
@@ -238,7 +245,7 @@ function Dashboard() {
                     </>
                   ) : doc.reqParam % 3 == 1 ? (
                     <>
-                      {' '}
+                      {" "}
                       <Button
                         // onClick={() => onClick(data)}
                         // variant="outline"
