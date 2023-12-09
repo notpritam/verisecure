@@ -1,5 +1,5 @@
 {
-  "abi": [
+  "abi":[
     {
       "anonymous": false,
       "inputs": [
@@ -156,6 +156,19 @@
         }
       ],
       "name": "sendRequestForApproval",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_apiKey",
+          "type": "string"
+        }
+      ],
+      "name": "setApiKey",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
