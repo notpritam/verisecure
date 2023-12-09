@@ -45,8 +45,6 @@ function HomePage() {
 
   return (
     <>
-      <Header />
-      {/* <div></div> */}
       <div className="min-w-screen justify-center p-[2rem] min-h-screen w-full max-w-[1280px] h-full flex items-center">
         <img
           src="https://www.getsims.com/wp-content/uploads/2020/12/gradient-background-02.jpg"
