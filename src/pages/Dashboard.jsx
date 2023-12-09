@@ -35,7 +35,6 @@ function Dashboard() {
   };
   return (
     <Dialog>
-      <img src=""></img>
       <header className="flex z-[999] items-center border-b-2 pb-4 backdrop-blur-xl fixed top-0 left-0 right-0 pl-[4rem] pr-[4rem] p-4 dark justify-between">
         <div className="flex items-center justify-between w-full">
           <span className="text-[1.5rem] tracking-wide font-bold">
@@ -104,9 +103,14 @@ function Dashboard() {
                     >
                       John Doe {i}
                     </span>
-                    <span className="text-[0.8rem] opacity-80">
-                      0x1234567890
-                    </span>
+                    <div className="flex gap-8">
+                      <span className="text-[0.8rem] opacity-80">
+                        0x1234567890
+                      </span>
+                      <span className="text-[0.8rem] opacity-80">
+                        Size :- 123Kb
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-4">
