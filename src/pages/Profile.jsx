@@ -139,6 +139,7 @@ function Profile() {
       setIsAccepting(true);
       console.log(cid, requestSender);
       await (await contract.approveRequest(cid, requestSender)).wait();
+      await fetchPendingRequests();
       const fileData = await contract.documents(cid);
       await AcceptRequest(fileData);
       setIsAccepting(false);
@@ -494,7 +495,7 @@ function Profile() {
                             handleApprove(doc?.cid, doc?.requestSender)
                           }
                         >
-                          Accept
+                          Approve
                         </Button>
                         <Button
                           disabled={isAccepting}

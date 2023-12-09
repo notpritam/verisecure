@@ -55,8 +55,8 @@ function Dashboard() {
 
       // Now requestInfo contains the data from the mapping for the specified userAddress and cid
       console.log("Request Information:", requestInfo);
-      if (requestInfo.requestSent) return 1;
       if (requestInfo.acknowledgment) return 2;
+      if (requestInfo.requestSent) return 1;
 
       return 0;
     } catch (error) {
@@ -195,7 +195,7 @@ function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-4 ">
                   {doc.reqParam % 3 == 0 ? (
                     <>
                       <DialogTrigger asChild>
@@ -206,7 +206,7 @@ function Dashboard() {
                             String(walletAddress).toLowerCase()
                           }
                           variant="outline"
-                          className="flex gap-2 items-center "
+                          className="flex gap-2 w-44 items-center "
                         >
                           {/* <Eye /> */}
                           <Lock />
@@ -251,18 +251,19 @@ function Dashboard() {
                         // variant="outline"
                         // disabled
                         // cusrsor={arrow}
-                        className="flex gap-2 items-center "
+                        className="flex gap-2  w-44 items-center "
                       >
                         {/* <Eye /> */}
                         <ShieldEllipsis />
-                        Pending Access
+                        Requested Access
                       </Button>
                     </>
                   ) : (
                     <Button
                       onClick={() => handleShowDetails(i)}
                       variant="outline"
-                      className="flex gap-2 items-center "
+                      // disabled
+                      className="flex gap-2 w-44 items-center "
                     >
                       {/* <Eye /> */}
                       {/* <ShieldEllipsis /> */}
