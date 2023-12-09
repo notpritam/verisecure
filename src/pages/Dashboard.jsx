@@ -4,14 +4,21 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Eye, Search, Upload, UserRoundCog, Wallet } from "lucide-react";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useWallet } from "./WalletAddressContext";
 
 function Dashboard() {
   const [showDetails, setShowDetails] = useState(false);
 
+  const { walletAddress, setWalletAddress } = useWallet();
   const handleShowDetails = (id) => {
     setShowDetails(true);
   };
+
+  const disconnectWalletHandler = () => {
+    setWalletAddress(null); // Clear the wallet address from the context
+  };
+
   return (
     <>
       <img src=""></img>
@@ -28,10 +35,25 @@ function Dashboard() {
               </Button>
             </Link>
             <Link to="/profile">
-              <Button variant="outline" className="flex gap-2">
-                <UserRoundCog />
-                Your Profile
-              </Button>
+              {walletAddress ? (
+                <>
+                  <span>Connected Wallet: {walletAddress}</span>
+                  <Button
+                    onClick={disconnectWalletHandler}
+                    variant="outline"
+                    className="flex gap-2"
+                  >
+                    <UserRoundCog />
+                    Disconnect Wallet
+                  </Button>
+                </>
+              ) : (
+                <Link to="/">
+                  <Button variant="outline" className="flex gap-2">
+                    Connect Wallet
+                  </Button>
+                </Link>
+              )}
             </Link>
           </div>
         </div>
