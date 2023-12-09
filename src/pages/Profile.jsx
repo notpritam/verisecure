@@ -86,7 +86,7 @@ function Profile() {
         const request = await contract.requestAccess(walletAddress, cid);
         let { requestSender, _, requestSent, acknowledgment } = request;
         console.log(request, docName, fileSize);
-        // fileSize = parseInt(fileSize._hex.toString());
+        fileSize = parseInt(fileSize._hex.toString());
         console.log(cid,acknowledgment,docName)
         return { cid, docName, docOwner, fileSize, acknowledgment };
       });
@@ -422,18 +422,18 @@ function Profile() {
                     ></img>
                     <div className="flex flex-col">
                       <span className={cn('text-[1.5rem] font-bold')}>
-                        {doc.docName}
+                        {doc?.docName}
                       </span>
                       <div className="flex gap-8">
                         <span className="text-[0.8rem] opacity-80">
-                          {doc.docOwner}
+                          {doc?.docOwner}
                         </span>
                         <span className="text-[0.8rem] opacity-80">
                           Size :- {parseInt(doc?.fileSize._hex.toString())}KB
                         </span>
                       </div>
                     </div>
-                    {doc.acknowledgment ? (
+                    {doc?.acknowledgment ? (
                       <button
                         onClick={() => handleViewFile(file.cid, file.mimeType)}
                         className="view-button"
@@ -489,7 +489,7 @@ function Profile() {
                         <Button
                           disabled={isRejecting}
                           onClick={() =>
-                            handleApprove(doc.cid, doc.requestSender)
+                            handleApprove(doc?.cid, doc?.requestSender)
                           }
                         >
                           Accept
@@ -497,7 +497,7 @@ function Profile() {
                         <Button
                           disabled={isAccepting}
                           onClick={() =>
-                            handleReject(doc.cid, doc.requestSender)
+                            handleReject(doc?.cid, doc?.requestSender)
                           }
                         >
                           Reject
