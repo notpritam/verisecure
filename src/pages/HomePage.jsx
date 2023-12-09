@@ -78,11 +78,11 @@ function HomePage() {
         </div>
       </div>
 
-      <div className="w-full z-[999]  items-center justify-center flex flex-col">
-        <span className="text-[4rem] font-bold monster">How it Works?</span>
+      <div className="w-full z-[1] gap-4 lg:gap-[4rem]   relative items-center justify-center flex flex-col">
+        <span className="lg:text-[3rem] font-bold monster">How it Works?</span>
 
         <div className="grid w-full max-w-[1280px] gap-4 grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <Card className="w-full flex flex-col items-start p-4 pt-12 pb-12 gap-4 ">
               <Avatar className="h-[4rem] w-[4rem]">
                 <AvatarImage
@@ -97,6 +97,23 @@ function HomePage() {
               <span className="monster text-[1.25rem]">
                 Descriptopn Goes Here
               </span>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-full z-[1] gap-4 lg:gap-[4rem] lg:mt-[4rem]   relative items-center justify-center flex flex-col">
+        <span className="lg:text-[3rem] font-bold monster">
+          Tech Stack Used
+        </span>
+
+        <div className="grid w-full max-w-[1280px]  lg:gap-8 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card className="w-full bg-transparent flex h-[140px] flex-col items-start rounded-lg overflow-clip gap-4 ">
+              <img
+                className="w-full h-full object-cover"
+                src="https://d33wubrfki0l68.cloudfront.net/5cfdb87c57bf1f7799a3c2e509b8feacb1616467/dba9e/static/fb8aa1bb70c9925ce1ae22dc2711b343/31987/nextjs-logo.png"
+              ></img>
             </Card>
           ))}
         </div>
