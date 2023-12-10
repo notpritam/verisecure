@@ -27,7 +27,7 @@ import {
 import { useVariable } from '@/lib/storage';
 import lighthouse, { shareFile } from '@lighthouse-web3/sdk';
 import sendNotification from '@/utils/sendPushWeb3Notificatiobs';
-
+import { ClipLoader } from 'react-spinners';
 function Profile() {
   const [pastRequests, setPastRequests] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
@@ -41,6 +41,7 @@ function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFileUrl, setSelectedFileUrl] = useState(null);
   const [mimeType, setMimeType] = useState();
+  const [loading, setLoading] = useState(false);
 
   const signAuthMessage = async () => {
     const address = await signer.getAddress();
@@ -116,7 +117,7 @@ function Profile() {
         const fileData = await contract.documents(cid);
         let { _a, docName, fileSize, _b } = fileData;
         console.log(fileData, docName, fileSize);
-        fileSize = parseInt(fileSize._hex.toString());  
+        fileSize = parseInt(fileSize._hex.toString());
         console.log(fileSize);
 
         return { cid, docName, requestSender, fileSize };
@@ -197,14 +198,19 @@ function Profile() {
 
   const handleViewFile = async (cid) => {
     try {
+      setLoading(true);
       const fileUrl = await decryptFile(cid);
       setSelectedFileUrl(fileUrl);
       const getFileInfo = await lighthouse.getFileInfo(cid);
-      console.log("getFileInfo", getFileInfo);
+      console.log('getFileInfo', getFileInfo);
       setMimeType(getFileInfo?.data?.mimeType);
       setIsModalOpen(true);
+      setLoading(false);
+
     } catch (error) {
       console.error('Error decrypting file:', error);
+      setLoading(false);
+
     }
   };
 
@@ -393,7 +399,10 @@ function Profile() {
         </div>
       </header>
 
-      <div className="w-full h-full flex flex-col mt-[4rem] justify-center items-center">
+      <div className="w-full h-full flex flex-col mt-[4rem] justify-center items-center ml-6">
+        <div className="p-2">
+          {loading ? <ClipLoader color="white" size={40} /> : <></>}
+        </div>
         {/* <div className="min-w-screen justify-center flex p-[2rem]  w-full max-w-[1280px] h-full items-center">
           <Card className="p-6 items-center flex flex-col gap-4 justify-center w-full">
             <Label htmlFor="picture" className="text-[1.25rem]">
