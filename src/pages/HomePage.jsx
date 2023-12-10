@@ -66,13 +66,7 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
                 </Button>
 
                 <Button className="flex gap-2 w-40" variant="outline">
-                  <Link
-                    to={{
-                      pathname: '/profile',
-                    }}
-                  >
-                    Profile
-                  </Link>
+                  <Link to={'/profile?action=upload'}>Profile</Link>
                 </Button>
               </>
             ) : (
