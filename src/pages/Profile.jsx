@@ -87,7 +87,7 @@ function Profile() {
         let { requestSender, _, requestSent, acknowledgment } = request;
         console.log(request, docName, fileSize);
         fileSize = parseInt(fileSize._hex.toString());
-        console.log(cid,acknowledgment,docName)
+        console.log(cid, acknowledgment, docName);
         return { cid, docName, docOwner, fileSize, acknowledgment };
       });
 
@@ -171,7 +171,7 @@ function Profile() {
     try {
       const getFileInfo = await lighthouse.getFileInfo(fileCid);
       const response = await lighthouse.getAccessConditions(fileCid);
-      console.log(response)
+      console.log(response);
       const fileType = getFileInfo.data.mimeType;
       const { publicKey, signedMessage } = await signAuthMessage();
       const keyObject = await lighthouse.fetchEncryptionKey(
@@ -302,7 +302,10 @@ function Profile() {
     console.log('doc', doc);
     const accessResponse = await lighthouse.getAccessConditions(doc.cid);
     console.log('accessResponse', accessResponse);
-    let userAddressArray = accessResponse.data.sharedTo;
+    let userAddressArray =
+      accessResponse.data.sharedTo.length > 0
+        ? accessResponse.data.sharedTo
+        : [];
     userAddressArray.push(doc.requestSender);
     let shareFileForReq = await shareFile(doc?.cid, userAddressArray);
     console.log('shareFileForReq', shareFileForReq);
@@ -354,7 +357,7 @@ function Profile() {
         <div className="flex items-center justify-between w-full">
           <Link to={'/'}>
             <span className="text-[1.5rem] tracking-wide font-bold">
-              AnonVerify
+              VeriSecure
             </span>
           </Link>
           <div className="flex gap-4">

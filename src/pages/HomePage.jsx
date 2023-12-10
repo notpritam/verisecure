@@ -1,18 +1,19 @@
-import Header from "@/components/header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Github, Wallet } from "lucide-react";
-import React, { useState } from "react";
-import ethLogo from "../assets/ethIndia.svg";
-import { Link } from "react-router-dom";
+import Header from '@/components/header';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Github, Wallet } from 'lucide-react';
+import React, { useState } from 'react';
+import ethLogo from '../assets/ethIndia.svg';
+import { Link } from 'react-router-dom';
 import Web3 from 'web3';
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { useWallet } from '../pages/WalletAddressContext';
 import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
-import { create } from 'zustand'
+import { create } from 'zustand';
+// import { Button } from '@/components/ui/button';
 
 function HomePage({ web3Handler, walletAddress, provider, contract }) {
   // const { walletAddress, setWalletAddress } = useWallet();
@@ -36,7 +37,7 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
             <img className="h-6 pl-2 pr-2" src={ethLogo}></img>
           </Badge>
           <span className="monster text-[4rem] font-bold">
-            Empower Your Identity, Safeguard Your Privacy with AnonVerify
+          Fast-Track Your Academic Recognition Journey with Encryption enabled security!
           </span>
           <span className="opacity-80">
             Seamlessly Verify Documents Without Compromising Your
@@ -53,6 +54,26 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
                 >
                   Disconnect Wallet
                 </Button>
+                <Button className="flex gap-2 w-40" variant="outline">
+            
+            <Link
+              to={{
+                pathname: '/dashboard',
+              }}
+              >
+              Dashboard
+            </Link>
+          </Button>
+
+          <Button className="flex gap-2 w-40" variant="outline">
+            <Link
+              to={{
+                pathname: '/profile',
+              }}
+              >
+              Profile
+            </Link>
+          </Button>
               </>
             ) : (
               <Button className="flex gap-2" onClick={web3Handler}>
@@ -66,21 +87,8 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
               View on Github
             </Button>
           </div>
-          <Link
-            to={{
-              pathname: "/dashboard",
-            }}
-          >
-            Dashboard
-          </Link>
+        
 
-          <Link
-            to={{
-              pathname: "/profile",
-            }}
-          >
-            Profile
-          </Link>
           {/* <button
             onClick={navigate('/dashboard', {
               state: {
@@ -109,7 +117,7 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
               </Avatar>
               <span className="font-bold monster text-[1.25rem]">
                 Ttile Goes Here
-              </span>{" "}
+              </span>{' '}
               <span className="monster text-[1.25rem]">
                 Descriptopn Goes Here
               </span>
@@ -150,7 +158,7 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
               </Avatar>
               <span className="font-bold monster text-[1.25rem]">
                 Ttile Goes Here
-              </span>{" "}
+              </span>{' '}
               <span className="monster text-[1.25rem]">
                 Descriptopn Goes Here
               </span>
