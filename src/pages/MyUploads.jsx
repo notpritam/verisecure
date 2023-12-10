@@ -37,7 +37,8 @@ function MyUploads() {
   const [mimeType, setMimeType] = useState();
   const walletAddress = useVariable((state) => state.walletAddress);
   const contract = useVariable((state) => state.contract);
-  
+  const [fileIsLoading, setFileIsLoading] = useState(false);
+
   const signAuthMessage = async () => {
     const address = await signer.getAddress();
     const messageRequested = (await lighthouse.getAuthMessage(address)).data
@@ -50,6 +51,7 @@ function MyUploads() {
   };
 
   const handleFileChange = async (event) => {
+    setFileIsLoading(true);
     setSelectedFile(URL.createObjectURL(event.target.files[0]));
     const signerAddress = await signer.getAddress();
     console.log("tr signer", signer, signerAddress);
@@ -70,7 +72,9 @@ function MyUploads() {
     if (output?.data?.fileList) {
       cid = output.data.fileList[0].cid;
       _docName = output.data.fileList[0].fileName;
-      _fileSize = Math.round(Number(output.data.fileList[0].fileSizeInBytes) / 1024);
+      _fileSize = Math.round(
+        Number(output.data.fileList[0].fileSizeInBytes) / 1024
+      );
     } else {
       cid = output.data[0].Hash;
       _docName = output.data[0].Name;
@@ -80,7 +84,8 @@ function MyUploads() {
     await (await contract.addDocument(cid, _docName, _fileSize)).wait();
     setSelectedFile(null);
 
-    getUploads();
+    await getUploads();
+    setFileIsLoading(false);
   };
   const handleFileUpload = () => {};
 
@@ -254,7 +259,12 @@ function MyUploads() {
             {selectedFile && (
               <div className="flex flex-col gap-4">
                 <img src={selectedFile} alt="Selected file" className="mt-4" />
-                <Button onClick={() => handleFileUpload()}>Upload File</Button>
+                <Button
+                  onClick={() => handleFileUpload()}
+                  disabled={fileIsLoading}
+                >
+                  {fileIsLoading ? "Uploading..." : "Upload File"}
+                </Button>
               </div>
             )}
           </Card>
@@ -274,14 +284,25 @@ function MyUploads() {
                     displayValue = value ? "Yes" : "No";
                   } else if (key === "createdAt") {
                     displayValue = new Date(value).toLocaleString(); // Format date
+                  } else if (key === "fileSizeInBytes") {
+                    displayValue = Math.floor(Number(value) / 1024);
                   } else {
                     displayValue = value;
                   }
 
                   return (
                     <div key={propIndex} className="flex justify-between">
-                      <strong>{key}:</strong>
-                      <span>{displayValue}</span>
+                      {key === "fileSizeInBytes" ? (
+                        <>
+                          <strong>{key}:</strong>
+                          <span>{displayValue} {"KB"}</span>
+                        </>
+                      ) : (
+                        <>
+                          <strong>{key}:</strong>
+                          <span>{displayValue}</span>
+                        </>
+                      )}
                     </div>
                   );
                 })}

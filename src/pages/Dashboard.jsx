@@ -34,6 +34,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 function Dashboard() {
   const [showDetails, setShowDetails] = useState(false);
   const [documents, setDocuments] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
   const [approvalLoading, setApprovalLoading] = useState(false);
   const walletAddress = useVariable((state) => state.walletAddress);
   const contract = useVariable((state) => state.contract);
@@ -78,6 +79,17 @@ function Dashboard() {
       console.log(error);
     }
   }
+
+  // New function to handle search input change
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
+  // Function to filter documents based on search input
+  const filteredDocuments = documents.filter((doc) =>
+    doc.uploader.toLowerCase().includes(searchInput.toLowerCase())
+  );
+  
   const fetchDocuments = async () => {
     try {
       // const x=await contract.queryFilter("*");
@@ -129,12 +141,6 @@ function Dashboard() {
   }, []);
   return (
     <Dialog>
-      {/* <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-900 z-[0]">
-        <img
-          className="blur-[300px]"
-          src="https://images.pexels.com/photos/6985001/pexels-photo-6985001.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
-        ></img>
-      </div> */}
       <div className="min-h-screen z-[1] relative h-screen w-screen overflow-x-hidden flex items-center gap-[4rem]  justify-center min-w-screen">
         <div
           className={cn(
@@ -151,6 +157,8 @@ function Dashboard() {
             <Input
               className="max-w-[600px] w-full"
               placeholder="Enter User Id"
+              value={searchInput} // Set the value of the input
+              onChange={handleSearchInputChange} // Set the onChange handler
             />{" "}
             <Button variant="outline" className="">
               <Search />
@@ -159,7 +167,7 @@ function Dashboard() {
 
           <div className="flex flex-col mt-[6rem] items-center gap-6 overflow-hidden overflow-y-scroll hide-scrollbar w-full h-screen ">
             {/* {Array.from({ length: 20 }).map((_, i) => ( */}
-            {documents.map((doc, i) => (
+            {filteredDocuments.map((doc, i) => (
               <Card
                 key={i}
                 className={cn(
@@ -182,15 +190,15 @@ function Dashboard() {
                       )}
                     >
                       {/* John Doe {i} */}
-                      {doc.docName}
+                      {doc?.docName}
                       {/* {doc.reqParam} {doc.cid} */}
                     </span>
                     <div className="flex flex-col gap-2">
                       <span className="text-[0.8rem] opacity-80">
-                        {doc.uploader}
+                        {doc?.uploader}
                       </span>
                       <span className="text-[0.8rem] opacity-80">
-                        Size :{doc.fileSize}kb
+                        Size :- {doc?.fileSize} KB
                       </span>
                     </div>
                   </div>
