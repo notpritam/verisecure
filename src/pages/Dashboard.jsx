@@ -96,6 +96,7 @@ function Dashboard() {
   const fetchDocuments = async () => {
     try {
       // const x=await contract.queryFilter("*");
+      setApprovalLoading(true);
       console.log("-----");
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const blockNumber = await provider.getBlockNumber();
@@ -124,8 +125,12 @@ function Dashboard() {
 
       setDocuments(docs);
       console.log(docs);
+      setApprovalLoading(false);
+
     } catch (error) {
       console.log(error);
+      setApprovalLoading(false);
+
     }
   };
   useLayoutEffect(() => {
