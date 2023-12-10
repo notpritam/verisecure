@@ -116,7 +116,7 @@ function Profile() {
         const fileData = await contract.documents(cid);
         let { _a, docName, fileSize, _b } = fileData;
         console.log(fileData, docName, fileSize);
-        fileSize = parseInt(fileSize._hex.toString());
+        fileSize = parseInt(fileSize._hex.toString());  
         console.log(fileSize);
 
         return { cid, docName, requestSender, fileSize };
@@ -195,11 +195,13 @@ function Profile() {
     }
   };
 
-  const handleViewFile = async (cid, mimeType) => {
+  const handleViewFile = async (cid) => {
     try {
       const fileUrl = await decryptFile(cid);
       setSelectedFileUrl(fileUrl);
-      setMimeType(mimeType);
+      const getFileInfo = await lighthouse.getFileInfo(cid);
+      console.log("getFileInfo", getFileInfo);
+      setMimeType(getFileInfo?.data?.mimeType);
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error decrypting file:", error);
@@ -366,7 +368,7 @@ function Profile() {
         <div className="flex items-center justify-between w-full">
           <Link to={"/"}>
             <span className="text-[1.5rem] tracking-wide font-bold">
-              AnonVerify
+              VeriSecure
             </span>
           </Link>
           <div className="flex gap-4">
@@ -452,7 +454,7 @@ function Profile() {
                     </div>
                     {doc?.acknowledgment ? (
                       <button
-                        onClick={() => handleViewFile(doc?.cid, doc?.mimeType)}
+                        onClick={() => handleViewFile(doc?.cid)}
                         className="view-button"
                       >
                         View

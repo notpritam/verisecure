@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
-import ethLogo from "../assets/ethIndia.svg";
-import Header from "@/components/header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Link } from 'react-router-dom';
+import ethLogo from '../assets/ethIndia.svg';
+import Header from '@/components/header';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Github,
   Lock,
@@ -12,19 +12,19 @@ import {
   UserRoundCog,
   View,
   Wallet,
-} from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import React, { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import React, { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useVariable } from "@/lib/storage";
-import lighthouse from "@lighthouse-web3/sdk";
+} from '@/components/ui/popover';
+import { useVariable } from '@/lib/storage';
+import lighthouse from '@lighthouse-web3/sdk';
 
 function MyUploads() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -54,7 +54,7 @@ function MyUploads() {
     setFileIsLoading(true);
     setSelectedFile(URL.createObjectURL(event.target.files[0]));
     const signerAddress = await signer.getAddress();
-    console.log("tr signer", signer, signerAddress);
+    console.log('tr signer', signer, signerAddress);
     const signedMessage = await signAuthMessage();
     let file = event.target.files;
     console.log(file, apiKey, signerAddress, signedMessage.signedMessage);
@@ -65,7 +65,7 @@ function MyUploads() {
       signerAddress,
       signedMessage.signedMessage
     );
-    console.log("Encrypted File Status:", output);
+    console.log('Encrypted File Status:', output);
     let cid;
     let _docName;
     let _fileSize;
@@ -100,7 +100,7 @@ function MyUploads() {
         signedMessage
       );
 
-      console.log("0", fileCid, fileType);
+      console.log('0', fileCid, fileType);
       const decrypted = await lighthouse.decryptFile(
         fileCid,
         keyObject.data.key,
@@ -110,7 +110,7 @@ function MyUploads() {
       const url = URL.createObjectURL(decrypted);
       return url;
     } catch (error) {
-      console.error("Error decrypting file:", error);
+      console.error('Error decrypting file:', error);
       return null;
     }
   };
@@ -122,14 +122,14 @@ function MyUploads() {
       setMimeType(mimeType);
       setIsModalOpen(true);
     } catch (error) {
-      console.error("Error decrypting file:", error);
+      console.error('Error decrypting file:', error);
     }
   };
 
   const getUploads = async () => {
     try {
       const response = await lighthouse.getUploads(apiKey);
-      console.log("response", response);
+      console.log('response', response);
       const publicKey = await signer.getAddress();
 
       // Filter the files uploaded by the current user
@@ -137,7 +137,7 @@ function MyUploads() {
         (file) => file.publicKey.toLowerCase() === publicKey.toLowerCase()
       );
 
-      console.log("userUploadedFiles", userUploadedFiles);
+      console.log('userUploadedFiles', userUploadedFiles);
       setUserFiles(userUploadedFiles);
 
       // Check for files shared with the current user
@@ -153,10 +153,10 @@ function MyUploads() {
         (file) => file !== null
       );
 
-      console.log("shared", sharedFiles);
+      console.log('shared', sharedFiles);
       setOtherUserFiles(sharedFiles);
     } catch (error) {
-      console.error("Error fetching uploads:", error);
+      console.error('Error fetching uploads:', error);
     }
   };
 
@@ -182,21 +182,21 @@ function MyUploads() {
 
     let content;
     const fileType = mimeType; //getMimeType(selectedFileUrl);
-    console.log("fileType", fileType);
-    if (fileType.startsWith("image/")) {
+    console.log('fileType', fileType);
+    if (fileType.startsWith('image/')) {
       content = <img src={selectedFileUrl} alt="File Content" />;
-    } else if (fileType === "application/pdf") {
+    } else if (fileType === 'application/pdf') {
       content = (
         <iframe
           src={selectedFileUrl}
-          style={{ width: "100%", height: "300px" }}
+          style={{ width: '100%', height: '300px' }}
         ></iframe>
       );
-    } else if (fileType.startsWith("text/")) {
+    } else if (fileType.startsWith('text/')) {
       content = (
         <iframe
           src={selectedFileUrl}
-          style={{ width: "100%", height: "200px" }}
+          style={{ width: '100%', height: '200px' }}
         ></iframe>
       );
     } else {
@@ -208,7 +208,7 @@ function MyUploads() {
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setIsModalOpen(false)}
-            style={{ color: "black" }}
+            style={{ color: 'black' }}
           >
             Close
           </button>
@@ -222,13 +222,13 @@ function MyUploads() {
     <>
       <header className="flex z-[999] items-center border-b-2 pb-4 backdrop-blur-xl fixed top-0 left-0 right-0 pl-[4rem] pr-[4rem] p-4 dark justify-between">
         <div className="flex items-center justify-between w-full">
-          <Link to={"/"}>
+          <Link to={'/'}>
             <span className="text-[1.5rem] tracking-wide font-bold">
-              AnonVerify
+              VeriSecure
             </span>
           </Link>
           <div className="flex gap-4">
-            <Link to={"/profile?action=upload"}>
+            <Link to={'/profile?action=upload'}>
               {/* <Button className="flex gap-2">
                 <Upload />
                 Upload Files
@@ -280,9 +280,9 @@ function MyUploads() {
                 {Object.entries(file).map(([key, value], propIndex) => {
                   let displayValue;
 
-                  if (typeof value === "boolean") {
-                    displayValue = value ? "Yes" : "No";
-                  } else if (key === "createdAt") {
+                  if (typeof value === 'boolean') {
+                    displayValue = value ? 'Yes' : 'No';
+                  } else if (key === 'createdAt') {
                     displayValue = new Date(value).toLocaleString(); // Format date
                   } else if (key === "fileSizeInBytes") {
                     displayValue = Math.floor(Number(value) / 1024);

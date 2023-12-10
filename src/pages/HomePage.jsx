@@ -1,18 +1,19 @@
-import Header from "@/components/header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Github, Wallet } from "lucide-react";
-import React, { useState } from "react";
-import ethLogo from "../assets/ethIndia.svg";
-import { Link } from "react-router-dom";
+import Header from '@/components/header';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Github, Wallet } from 'lucide-react';
+import React, { useState } from 'react';
+import ethLogo from '../assets/ethIndia.svg';
+import { Link } from 'react-router-dom';
 import Web3 from 'web3';
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { useWallet } from '../pages/WalletAddressContext';
 import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
-import { create } from 'zustand'
+import { create } from 'zustand';
+// import { Button } from '@/components/ui/button';
 
 function HomePage({ web3Handler, walletAddress, provider, contract }) {
   // const { walletAddress, setWalletAddress } = useWallet();
@@ -36,7 +37,8 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
             <img className="h-6 pl-2 pr-2" src={ethLogo}></img>
           </Badge>
           <span className="monster text-[4rem] font-bold">
-            Empower Your Identity, Safeguard Your Privacy with AnonVerify
+            Fast-Track Your Academic Recognition Journey with Encryption enabled
+            security!
           </span>
           <span className="opacity-80">
             Seamlessly Verify Documents Without Compromising Your
@@ -53,6 +55,25 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
                 >
                   Disconnect Wallet
                 </Button>
+                <Button className="flex gap-2 w-40" variant="outline">
+                  <Link
+                    to={{
+                      pathname: '/dashboard',
+                    }}
+                  >
+                    Dashboard
+                  </Link>
+                </Button>
+
+                <Button className="flex gap-2 w-40" variant="outline">
+                  <Link
+                    to={{
+                      pathname: '/profile',
+                    }}
+                  >
+                    Profile
+                  </Link>
+                </Button>
               </>
             ) : (
               <Button className="flex gap-2" onClick={web3Handler}>
@@ -66,21 +87,7 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
               View on Github
             </Button>
           </div>
-          <Link
-            to={{
-              pathname: "/dashboard",
-            }}
-          >
-            Dashboard
-          </Link>
 
-          <Link
-            to={{
-              pathname: "/profile",
-            }}
-          >
-            Profile
-          </Link>
           {/* <button
             onClick={navigate('/dashboard', {
               state: {
@@ -94,7 +101,7 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
         </div>
       </div>
 
-      <div className="w-full z-[1] gap-4 lg:gap-[4rem]   relative items-center justify-center flex flex-col">
+      {/* <div className="w-full z-[1] gap-4 lg:gap-[4rem]   relative items-center justify-center flex flex-col">
         <span className="lg:text-[3rem] font-bold monster">How it Works?</span>
 
         <div className="grid w-full max-w-[1280px] gap-4 grid-cols-3">
@@ -109,16 +116,16 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
               </Avatar>
               <span className="font-bold monster text-[1.25rem]">
                 Ttile Goes Here
-              </span>{" "}
+              </span>{' '}
               <span className="monster text-[1.25rem]">
                 Descriptopn Goes Here
               </span>
             </Card>
           ))}
         </div>
-      </div>
+      </div> */}
 
-      <div className="w-full z-[1] gap-4 lg:gap-[4rem] lg:mt-[4rem]   relative items-center justify-center flex flex-col">
+      {/* <div className="w-full z-[1] gap-4 lg:gap-[4rem] lg:mt-[4rem]   relative items-center justify-center flex flex-col">
         <span className="lg:text-[3rem] font-bold monster">
           Tech Stack Used
         </span>
@@ -133,33 +140,20 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
             </Card>
           ))}
         </div>
-      </div>
+      </div> */}
 
-      <div className="w-full z-[1] gap-4 lg:gap-[4rem]   relative items-center justify-center flex flex-col">
+      {/* <div className="w-full z-[1] gap-4 lg:gap-[4rem]   relative items-center justify-center flex flex-col">
         <span className="lg:text-[3rem] font-bold monster">How it Works?</span>
 
         <div className="grid w-full max-w-[1280px] gap-4 grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Card className="w-full flex flex-col items-start p-4 pt-12 pb-12 gap-4 ">
-              <Avatar className="h-[4rem] w-[4rem]">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <span className="font-bold monster text-[1.25rem]">
-                Ttile Goes Here
-              </span>{" "}
-              <span className="monster text-[1.25rem]">
-                Descriptopn Goes Here
-              </span>
-            </Card>
-          ))}
+        <span className="font-bold monster text-[1.25rem]">
+            Actors involved are file accessors and file issuers, removing all the intermediatories.
+          </span>
+         
         </div>
-      </div>
+      </div> */}
 
-      <div className="w-full z-[1] gap-4 lg:gap-[4rem] lg:mt-[4rem]   relative items-center justify-center flex flex-col">
+      {/* <div className="w-full z-[1] gap-4 lg:gap-[4rem] lg:mt-[4rem]   relative items-center justify-center flex flex-col">
         <span className="lg:text-[3rem] font-bold monster">
           Tech Stack Used
         </span>
@@ -174,7 +168,7 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
             </Card>
           ))}
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
