@@ -2,6 +2,7 @@ import CustomButton from "@/components/custombutton";
 import Header from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import ClipLoader from "react-spinners/ClipLoader";
 import {
   Dialog,
   DialogContent,
@@ -76,6 +77,8 @@ function Dashboard() {
       setApprovalLoading(false);
     } catch (error) {
       console.log(error);
+      setApprovalLoading(false);
+
     }
   }
   const fetchDocuments = async () => {
@@ -155,6 +158,7 @@ function Dashboard() {
             <Button variant="outline" className="">
               <Search />
             </Button>
+      {approvalLoading?<ClipLoader color="white" size={40} />:<></>}
           </div>
 
           <div className="flex flex-col mt-[6rem] items-center gap-6 overflow-hidden overflow-y-scroll hide-scrollbar w-full h-screen ">
@@ -213,7 +217,8 @@ function Dashboard() {
                           {String(doc?.uploader).toLowerCase() ===
                           String(walletAddress).toLowerCase()
                             ? "Owner"
-                            : "Request Access"}
+                            // : (approvalLoading)?"Requesting Access ..."
+                            :"Request Access"}
                           {/* {i} {doc.cid} */}
                         </Button>
                       </DialogTrigger>
@@ -237,6 +242,7 @@ function Dashboard() {
                               type="submit"
                             >
                               Request Access
+                             {/* {approvalLoading? "Request Access":"Request Access"} */}
                               {/* {currentSelectedUser} */}
                             </Button>
                           </DialogClose>
