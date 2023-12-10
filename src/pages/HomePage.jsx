@@ -23,6 +23,11 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
     window.location.reload();
   };
 
+
+  const openGithub = async () => {
+    window.open("https://github.com/notpritam/verisecure/tree/backend", "blank")
+  }
+
   return (
     <>
       <Header web3Handler={web3Handler} walletAddress={walletAddress} />
@@ -76,7 +81,7 @@ function HomePage({ web3Handler, walletAddress, provider, contract }) {
               </Button>
             )}
             {/* </Link> */}
-            <Button className="flex gap-2" variant="outline">
+            <Button className="flex gap-2" variant="outline" onClick={openGithub}>
               <Github />
               View on Github
             </Button>
