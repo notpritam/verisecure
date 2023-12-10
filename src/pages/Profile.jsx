@@ -116,7 +116,7 @@ function Profile() {
         const fileData = await contract.documents(cid);
         let { _a, docName, fileSize, _b } = fileData;
         console.log(fileData, docName, fileSize);
-        fileSize = parseInt(fileSize._hex.toString());
+        fileSize = parseInt(fileSize._hex.toString());  
         console.log(fileSize);
 
         return { cid, docName, requestSender, fileSize };
